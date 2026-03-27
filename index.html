@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synapse Interactive | 5E Physics of Life</title>
+    <style>
+        body { margin: 0; overflow-x: hidden; background: #000; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: white; }
+        canvas { position: fixed; top: 0; left: 0; outline: none; z-index: 0; }
+        
+        #scroll-container { height: 400vh; position: relative; z-index: 1; pointer-events: none; }
+
+        /* AI Tutor UI */
+        #tutor-overlay {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 350px; background: rgba(10, 25, 41, 0.9); border: 2px solid #00ffff;
+            padding: 25px; border-radius: 15px; backdrop-filter: blur(10px);
+            display: none; z-index: 100; text-align: center; box-shadow: 0 0 20px #00ffff;
+        }
+
+        .tutor-btn {
+            background: transparent; border: 1px solid #00ffff; color: #00ffff;
+            padding: 10px 20px; margin: 5px; cursor: pointer; border-radius: 5px;
+            transition: 0.3s; font-weight: bold;
+        }
+
+        .tutor-btn:hover { background: #00ffff; color: #000; }
+
+        /* UI Labels */
+        .label { position: fixed; bottom: 20px; left: 20px; font-size: 0.9rem; color: #00ffff; opacity: 0.7; }
+    </style>
+</head>
+<body>
+
+    <div id="tutor-overlay">
+        <h2 style="color:#00ffff; margin-top:0;">AI Tutor</h2>
+        <p id="tutor-text">The Action Potential has arrived! But the vesicles are stuck. What ion must enter the terminal to trigger their release?</p>
+        <div id="tutor-options"></div>
+    </div>
+
+    <div class="label">Step 1: Engage - Scroll to start the Impulse</div>
+    <div id="scroll-container"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+        // 1. SCENE SETUP
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(renderer.domElement);
+
+        // 2. NEON LIGHTING & BLOOM (GLOW)
+        const renderScene = new RenderPass(scene, camera);
+        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+        bloomPass.threshold = 0.1;
+        bloomPass.strength = 1.2; 
+        
+        const composer = new EffectComposer(renderer);
+        composer.addPass(renderScene);
+        composer.addPass(bloomPass);
+
+        // 3. CODE-GENERATED GEOMETRY (OPTION B)
+        // Pre-Synaptic Terminal
+        const termGeom = new THREE.IcosahedronGeometry(2, 10);
+        const termMat = new THREE.MeshStandardMaterial({ color: 0x00ffff, wireframe: true, transparent: true, opacity: 0.3 });
+        const terminal = new THREE.Mesh(termGeom, termMat);
+        terminal.position.y = 5;
+        scene.add(terminal);
+
+        // Vesicles (The Cargo)
+        const vesicles = [];
+        const vGeom = new THREE.SphereGeometry(0.2, 16, 16);
+        const vMat = new THREE.MeshStandardMaterial({ color: 0xffff00, emissive: 0xffff00, emissiveIntensity: 2 });
+        for (let i = 0; i < 6; i++) {
+            const v = new THREE.Mesh(vGeom, vMat);
+            v.position.set((Math.random()-0.5)*1.5, 5 + (Math.random()-0.5), (Math.random()-0.5)*1.5);
+            scene.add(v);
+            vesicles.push(v);
+        }
+
+        // Post-Synaptic Dendrite
+        const denGeom = new THREE.CylinderGeometry(4, 5, 0.5, 32);
+        const denMat = new THREE.MeshStandardMaterial({ color: 0xff00ff, wireframe: true });
+        const dendrite = new THREE.Mesh(denGeom, denMat);
+        dendrite.position.y = -6;
+        scene.add(dendrite);
+
+        camera.position.z = 10;
+
+        // 4. GSAP CINEMATIC SCROLLING
+        gsap.registerPlugin(ScrollTrigger);
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: "#scroll-container",
+                start: "top top",
+                end: "bottom bottom",
+                scrub: 1
+            }
+        });
+
+        tl.to(camera.position, { z: 6, y: 2, duration: 2 })
+          .to(terminal.rotation, { y: Math.PI, duration: 2 }, "-=2");
+
+        // 5. AI TUTOR LOGIC
+        let paused = false;
+        let answered = false;
+
+        ScrollTrigger.create({
+            trigger: "#scroll-container",
+            start: "40% top",
+            onEnter: () => {
+                if (!answered) {
+                    document.body.style.overflow = "hidden"; // Lock scroll
+                    showTutor();
+                }
+            }
+        });
+
+        function showTutor() {
+            const overlay = document.getElementById('tutor-overlay');
+            overlay.style.display = 'block';
+            const options = ["Sodium", "Calcium", "Potassium"];
+            const optCont = document.getElementById('tutor-options');
+            optCont.innerHTML = '';
+            
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'tutor-btn';
+                btn.innerText = opt;
+                btn.onclick = () => {
+                    if(opt === "Calcium") {
+                        document.getElementById('tutor-text').innerText = "Correct! The Calcium surge triggers exocytosis. Watch the neurotransmitters release!";
+                        answered = true;
+                        setTimeout(() => {
+                            overlay.style.display = 'none';
+                            document.body.style.overflow = "auto";
+                            releaseVesicles();
+                        }, 2000);
+                    } else {
+                        document.getElementById('tutor-text').innerText = "Incorrect. Think about the specific ion that signals the vesicles to move.";
+                    }
+                };
+                optCont.appendChild(btn);
+            });
+        }
+
+        function releaseVesicles() {
+            vesicles.forEach((v, i) => {
+                gsap.to(v.position, {
+                    y: -5.5,
+                    duration: 3,
+                    delay: i * 0.2,
+                    ease: "power1.in",
+                    onComplete: () => {
+                        v.material.color.set(0x00ff00); // Binding to receptors
+                        v.material.emissive.set(0x00ff00);
+                    }
+                });
+            });
+        }
+
+        // 6. ANIMATION LOOP
+        function animate() {
+            requestAnimationFrame(animate);
+            terminal.rotation.x += 0.001;
+            composer.render();
+        }
+        animate();
+
+        // Handle Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
