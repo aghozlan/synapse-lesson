@@ -3,165 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Realistic Synapse | Mobile Optimized</title>
+    <title>Synapse: The Cinematic Journey</title>
     <style>
-        body { margin: 0; background: #000; font-family: Arial, sans-serif; color: white; overflow-x: hidden; }
-        /* CRITICAL: Ensure the canvas is visible and at the back */
-        canvas { position: fixed; top: 0; left: 0; z-index: -1; width: 100vw; height: 100vh; }
-        
-        #scroll-container { height: 500vh; position: relative; z-index: 1; pointer-events: none; }
-        
-        #hud { position: fixed; top: 30px; left: 20px; z-index: 10; border-left: 2px solid #00ffff; padding-left: 15px; pointer-events: none; }
-        #stage-title { color: #00ffff; font-size: 1.2rem; font-weight: bold; text-transform: uppercase; }
-        
-        #tutor-overlay {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 85%; max-width: 350px; background: rgba(5, 10, 20, 0.95); border: 1px solid #00ffff;
-            padding: 25px; border-radius: 10px; display: none; z-index: 100; text-align: center;
+        body { margin: 0; background: #000; font-family: 'Helvetica', sans-serif; overflow: hidden; }
+        canvas { position: fixed; top: 0; left: 0; }
+        #overlay {
+            position: fixed; top: 10%; left: 5%; color: #00ffff; z-index: 10;
+            border-left: 3px solid #00ffff; padding-left: 15px;
+            text-transform: uppercase; letter-spacing: 2px;
         }
-        .tutor-btn {
-            display: block; width: 100%; padding: 12px; margin: 10px 0;
-            background: #00ffff; color: #000; border: none; cursor: pointer; font-weight: bold;
-        }
+        #sub-text { color: white; font-size: 0.8rem; margin-top: 5px; opacity: 0.8; }
     </style>
 </head>
 <body>
 
-    <div id="hud">
-        <div id="stage-title">The Neural Gap</div>
-        <p style="font-size: 0.8rem;">Scroll down to begin...</p>
+    <div id="overlay">
+        <div id="status">Initializing Simulation...</div>
+        <div id="sub-text">Preparing Neural Pathway</div>
     </div>
-
-    <div id="tutor-overlay">
-        <h3 style="color:#00ffff;">BIOLOGY CHECK</h3>
-        <p id="tutor-text">The impulse reached the bulb. Which ion triggers the release?</p>
-        <div id="tutor-options"></div>
-    </div>
-
-    <div id="scroll-container"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <script>
-        // --- MOBILE COMPATIBLE THREE.JS ---
-        let scene, camera, renderer, terminal, vesicles = [], dendrite;
+        let scene, camera, renderer, terminal, membrane, vesicles = [];
 
         function init() {
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
             
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit for performance
+            renderer.setPixelRatio(window.devicePixelRatio);
             document.body.appendChild(renderer.domElement);
 
-            // Lighting
-            const ambient = new THREE.AmbientLight(0xffffff, 0.5);
+            // Lighting for "Real" textures
+            const ambient = new THREE.AmbientLight(0x404040, 2); 
             scene.add(ambient);
-            const point = new THREE.PointLight(0x00ffff, 1, 100);
-            point.position.set(5, 5, 5);
-            scene.add(point);
+            const spot = new THREE.SpotLight(0x00ffff, 2);
+            spot.position.set(10, 20, 10);
+            scene.add(spot);
 
-            // 1. Pre-Synaptic Terminal (The Bulb)
-            const termGeom = new THREE.SphereGeometry(4, 32, 32);
-            const termMat = new THREE.MeshPhongMaterial({ 
-                color: 0x2244ff, 
-                wireframe: true, 
-                transparent: true, 
-                opacity: 0.4 
+            createAnatomy();
+            startCinematic();
+            animate();
+        }
+
+        function createAnatomy() {
+            // 1. Organic Pre-Synaptic Terminal (The Bulb)
+            const termGeom = new THREE.SphereGeometry(5, 64, 64);
+            const termMat = new THREE.MeshStandardMaterial({ 
+                color: 0x1a2a6c, 
+                roughness: 0.2, 
+                metalness: 0.3,
+                transparent: true,
+                opacity: 0.6
             });
             terminal = new THREE.Mesh(termGeom, termMat);
+            terminal.scale.set(1, 1.4, 1);
             terminal.position.y = 10;
             scene.add(terminal);
 
-            // 2. Vesicles
-            for (let i = 0; i < 8; i++) {
-                const v = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.4, 12, 12),
-                    new THREE.MeshBasicMaterial({ color: 0xffff00 })
-                );
-                v.position.set((Math.random()-0.5)*3, 10 + (Math.random()-0.5)*3, (Math.random()-0.5)*3);
+            // 2. The Axon (The realistic connection)
+            const axonGeom = new THREE.CylinderGeometry(1.5, 1.5, 20, 32);
+            const axon = new THREE.Mesh(axonGeom, termMat);
+            axon.position.y = 22;
+            scene.add(axon);
+
+            // 3. Vesicles (Messengers)
+            const vGeom = new THREE.SphereGeometry(0.4, 32, 32);
+            const vMat = new THREE.MeshStandardMaterial({ 
+                color: 0xffff00, 
+                emissive: 0xffff00, 
+                emissiveIntensity: 1 
+            });
+            for(let i=0; i<15; i++) {
+                const v = new THREE.Mesh(vGeom, vMat);
+                v.position.set((Math.random()-0.5)*4, 10 + (Math.random()-0.5)*3, (Math.random()-0.5)*4);
                 scene.add(v);
                 vesicles.push(v);
             }
 
-            // 3. Post-Synaptic Membrane
-            const denGeom = new THREE.BoxGeometry(20, 1, 10);
-            const denMat = new THREE.MeshPhongMaterial({ color: 0xff00ff, wireframe: true });
-            dendrite = new THREE.Mesh(denGeom, denMat);
-            dendrite.position.y = -10;
-            scene.add(dendrite);
+            // 4. Post-Synaptic Membrane (Realistic Curve)
+            const memGeom = new THREE.TorusGeometry(15, 3, 16, 100, Math.PI);
+            membrane = new THREE.Mesh(memGeom, termMat);
+            membrane.rotation.x = Math.PI/2;
+            membrane.position.y = -15;
+            scene.add(membrane);
 
-            camera.position.set(0, 10, 20);
-
-            setupAnimation();
-            animate();
+            camera.position.set(0, 10, 30);
         }
 
-        function setupAnimation() {
-            gsap.registerPlugin(ScrollTrigger);
-            
-            const tl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: "#scroll-container",
-                    start: "top top",
-                    end: "bottom bottom",
-                    scrub: 1
-                }
-            });
+        function startCinematic() {
+            const mainTl = gsap.timeline({ repeat: -1 });
 
-            tl.to(camera.position, { y: -5, z: 25, duration: 10 });
-            
-            ScrollTrigger.create({
-                trigger: "#scroll-container",
-                start: "40% top",
-                onEnter: () => {
-                    document.body.style.overflow = "hidden";
-                    document.getElementById('tutor-overlay').style.display = 'block';
-                    renderTutor();
-                }
-            });
-        }
+            // STEP 1: Impulse Arrival
+            mainTl.to("#status", { textContent: "1. Action Potential Arrival", duration: 1 });
+            mainTl.to(camera.position, { y: 12, z: 20, duration: 3, ease: "power2.inOut" });
 
-        function renderTutor() {
-            const cont = document.getElementById('tutor-options');
-            cont.innerHTML = '';
-            ["Sodium", "Calcium"].forEach(opt => {
-                const b = document.createElement('button');
-                b.className = 'tutor-btn';
-                b.innerText = opt;
-                b.onclick = () => {
-                    if(opt === "Calcium") {
-                        document.getElementById('tutor-overlay').style.display = 'none';
-                        document.body.style.overflow = "auto";
-                        release();
-                    }
-                };
-                cont.appendChild(b);
-            });
-        }
+            // STEP 2: Calcium Influx (Glow effect)
+            mainTl.to("#status", { textContent: "2. Calcium Influx (Ca2+)", duration: 1 });
+            mainTl.to(terminal.material, { emissiveIntensity: 2, duration: 1, color: 0x00ffff });
 
-        function release() {
+            // STEP 3: Vesicle Docking & Release
+            mainTl.to("#status", { textContent: "3. Exocytosis / Neurotransmitter Release", duration: 1 });
             vesicles.forEach((v, i) => {
-                gsap.to(v.position, { y: -9.5, duration: 4, delay: i * 0.2 });
+                mainTl.to(v.position, { 
+                    y: -14, 
+                    duration: 4, 
+                    ease: "power1.in",
+                    delay: i * 0.1 
+                }, "release");
             });
+            mainTl.to(camera.position, { y: -5, z: 25, duration: 5, ease: "power2.inOut" }, "release");
+
+            // STEP 4: Receptor Binding
+            mainTl.to("#status", { textContent: "4. Receptor Binding & Signal Success", duration: 1 });
+            mainTl.to(membrane.material, { emissive: 0x00ff00, emissiveIntensity: 2, duration: 1 });
+            
+            // RESET
+            mainTl.to("#status", { textContent: "Restarting Cycle...", duration: 2 });
+            mainTl.to(camera.position, { y: 10, z: 30, duration: 2 });
         }
 
         function animate() {
             requestAnimationFrame(animate);
-            if(terminal) terminal.rotation.y += 0.005;
+            if(terminal) terminal.rotation.y += 0.002;
             renderer.render(scene, camera);
         }
 
-        // Initialize when window loads
         window.onload = init;
-        window.onresize = () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        };
     </script>
 </body>
 </html>
