@@ -3,42 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Synapse Interactive | 5E Physics of Life</title>
+    <title>Synapse: The Full Story | Ahmad Ghozlan</title>
     <style>
-        body { margin: 0; overflow-x: hidden; background: #000; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: white; }
-        canvas { position: fixed; top: 0; left: 0; outline: none; z-index: 0; }
+        body { margin: 0; background: #000; font-family: 'Arial', sans-serif; color: white; overflow-x: hidden; }
+        canvas { position: fixed; top: 0; left: 0; z-index: 1; }
         
-        #scroll-container { height: 400vh; position: relative; z-index: 1; pointer-events: none; }
+        #scroll-container { height: 500vh; position: relative; z-index: 2; pointer-events: none; }
 
-        /* AI Tutor UI */
+        /* Story HUD */
+        #hud {
+            position: fixed; top: 10%; left: 5%; z-index: 10;
+            text-transform: uppercase; letter-spacing: 2px;
+        }
+        #current-stage { color: #00ffff; font-size: 1.5rem; font-weight: bold; text-shadow: 0 0 10px #00ffff; }
+        #instruction { color: #ccc; font-size: 0.9rem; margin-top: 5px; }
+
+        /* AI Tutor Box */
         #tutor-overlay {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 350px; background: rgba(10, 25, 41, 0.9); border: 2px solid #00ffff;
-            padding: 25px; border-radius: 15px; backdrop-filter: blur(10px);
-            display: none; z-index: 100; text-align: center; box-shadow: 0 0 20px #00ffff;
+            width: 320px; background: rgba(0, 20, 40, 0.95); border: 2px solid #00ffff;
+            padding: 30px; border-radius: 20px; display: none; z-index: 100; text-align: center;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5); backdrop-filter: blur(10px);
         }
-
         .tutor-btn {
+            display: block; width: 100%; padding: 12px; margin: 10px 0;
             background: transparent; border: 1px solid #00ffff; color: #00ffff;
-            padding: 10px 20px; margin: 5px; cursor: pointer; border-radius: 5px;
-            transition: 0.3s; font-weight: bold;
+            cursor: pointer; border-radius: 8px; transition: 0.3s;
         }
-
         .tutor-btn:hover { background: #00ffff; color: #000; }
-
-        /* UI Labels */
-        .label { position: fixed; bottom: 20px; left: 20px; font-size: 0.9rem; color: #00ffff; opacity: 0.7; }
     </style>
 </head>
 <body>
 
+    <div id="hud">
+        <div id="current-stage">Stage 1: The Impulse</div>
+        <div id="instruction">Scroll down to track the Action Potential...</div>
+    </div>
+
     <div id="tutor-overlay">
-        <h2 style="color:#00ffff; margin-top:0;">AI Tutor</h2>
-        <p id="tutor-text">The Action Potential has arrived! But the vesicles are stuck. What ion must enter the terminal to trigger their release?</p>
+        <h3 style="color:#00ffff; margin-bottom:15px;">AI TUTOR: Critical Check</h3>
+        <p id="tutor-text">The impulse has reached the terminal, but the 'doors' are locked. Which ion acts as the key to release the neurotransmitters?</p>
         <div id="tutor-options"></div>
     </div>
 
-    <div class="label">Step 1: Engage - Scroll to start the Impulse</div>
     <div id="scroll-container"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -59,7 +66,7 @@
         import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
         import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-        // 1. SCENE SETUP
+        // --- 1. CORE ENGINE ---
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -67,68 +74,61 @@
         renderer.setPixelRatio(window.devicePixelRatio);
         document.body.appendChild(renderer.domElement);
 
-        // 2. NEON LIGHTING & BLOOM (GLOW)
-        const renderScene = new RenderPass(scene, camera);
-        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
-        bloomPass.threshold = 0.1;
-        bloomPass.strength = 1.2; 
-        
         const composer = new EffectComposer(renderer);
-        composer.addPass(renderScene);
-        composer.addPass(bloomPass);
+        composer.addPass(new RenderPass(scene, camera));
+        composer.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85));
 
-        // 3. CODE-GENERATED GEOMETRY (OPTION B)
-        // Pre-Synaptic Terminal
-        const termGeom = new THREE.IcosahedronGeometry(2, 10);
-        const termMat = new THREE.MeshStandardMaterial({ color: 0x00ffff, wireframe: true, transparent: true, opacity: 0.3 });
+        // --- 2. THE ANATOMY (THE STORY ACTORS) ---
+        // The Pre-Synaptic Terminal (Large, Top)
+        const termGeom = new THREE.IcosahedronGeometry(4, 3);
+        const termMat = new THREE.MeshStandardMaterial({ color: 0x00ffff, wireframe: true, transparent: true, opacity: 0.2 });
         const terminal = new THREE.Mesh(termGeom, termMat);
-        terminal.position.y = 5;
+        terminal.position.y = 10;
         scene.add(terminal);
 
-        // Vesicles (The Cargo)
+        // Vesicles (The Messengers)
         const vesicles = [];
-        const vGeom = new THREE.SphereGeometry(0.2, 16, 16);
+        const vGeom = new THREE.SphereGeometry(0.4, 16, 16);
         const vMat = new THREE.MeshStandardMaterial({ color: 0xffff00, emissive: 0xffff00, emissiveIntensity: 2 });
         for (let i = 0; i < 6; i++) {
             const v = new THREE.Mesh(vGeom, vMat);
-            v.position.set((Math.random()-0.5)*1.5, 5 + (Math.random()-0.5), (Math.random()-0.5)*1.5);
+            v.position.set((Math.random()-0.5)*2, 10 + (Math.random()-0.5)*2, (Math.random()-0.5)*2);
             scene.add(v);
             vesicles.push(v);
         }
 
-        // Post-Synaptic Dendrite
-        const denGeom = new THREE.CylinderGeometry(4, 5, 0.5, 32);
+        // The Post-Synaptic Neuron (Flat Receiver, Bottom)
+        const denGeom = new THREE.BoxGeometry(25, 2, 15);
         const denMat = new THREE.MeshStandardMaterial({ color: 0xff00ff, wireframe: true });
         const dendrite = new THREE.Mesh(denGeom, denMat);
-        dendrite.position.y = -6;
+        dendrite.position.y = -12;
         scene.add(dendrite);
 
-        camera.position.z = 10;
+        camera.position.set(0, 10, 15); // Start at the top neuron
 
-        // 4. GSAP CINEMATIC SCROLLING
+        // --- 3. THE CINEMATIC TIMELINE ---
         gsap.registerPlugin(ScrollTrigger);
-        const tl = gsap.timeline({
+        const mainTl = gsap.timeline({
             scrollTrigger: {
                 trigger: "#scroll-container",
                 start: "top top",
                 end: "bottom bottom",
-                scrub: 1
+                scrub: 1.5
             }
         });
 
-        tl.to(camera.position, { z: 6, y: 2, duration: 2 })
-          .to(terminal.rotation, { y: Math.PI, duration: 2 }, "-=2");
+        // Frame 1: Zoom into the Terminal
+        mainTl.to(camera.position, { y: 6, z: 12, duration: 5 });
+        mainTl.to("#current-stage", { textContent: "Stage 2: Arrival of Impulse", duration: 0.1 }, 2);
 
-        // 5. AI TUTOR LOGIC
-        let paused = false;
-        let answered = false;
-
+        // --- 4. THE INTERACTIVE GATE (AI TUTOR) ---
+        let locked = true;
         ScrollTrigger.create({
             trigger: "#scroll-container",
-            start: "40% top",
+            start: "35% top",
             onEnter: () => {
-                if (!answered) {
-                    document.body.style.overflow = "hidden"; // Lock scroll
+                if (locked) {
+                    document.body.style.overflow = "hidden";
                     showTutor();
                 }
             }
@@ -137,25 +137,26 @@
         function showTutor() {
             const overlay = document.getElementById('tutor-overlay');
             overlay.style.display = 'block';
-            const options = ["Sodium", "Calcium", "Potassium"];
             const optCont = document.getElementById('tutor-options');
             optCont.innerHTML = '';
             
-            options.forEach(opt => {
+            ["Sodium (Na+)", "Calcium (Ca2+)", "Potassium (K+)"].forEach(opt => {
                 const btn = document.createElement('button');
                 btn.className = 'tutor-btn';
                 btn.innerText = opt;
                 btn.onclick = () => {
-                    if(opt === "Calcium") {
-                        document.getElementById('tutor-text').innerText = "Correct! The Calcium surge triggers exocytosis. Watch the neurotransmitters release!";
-                        answered = true;
+                    if(opt.includes("Calcium")) {
+                        document.getElementById('tutor-text').innerText = "Correct! Ca2+ triggers the vesicles to fuse with the membrane.";
                         setTimeout(() => {
                             overlay.style.display = 'none';
                             document.body.style.overflow = "auto";
+                            locked = false;
+                            document.getElementById('current-stage').innerText = "Stage 3: Exocytosis";
+                            document.getElementById('instruction').innerText = "Watch the chemical release...";
                             releaseVesicles();
-                        }, 2000);
+                        }, 1500);
                     } else {
-                        document.getElementById('tutor-text').innerText = "Incorrect. Think about the specific ion that signals the vesicles to move.";
+                        document.getElementById('tutor-text').innerText = "Incorrect. Think about which ion enters to signal the 'drop'.";
                     }
                 };
                 optCont.appendChild(btn);
@@ -163,29 +164,33 @@
         }
 
         function releaseVesicles() {
+            // Camera follows the vesicles down
+            gsap.to(camera.position, { y: -5, z: 18, duration: 4, ease: "power2.inOut" });
+            
             vesicles.forEach((v, i) => {
                 gsap.to(v.position, {
-                    y: -5.5,
-                    duration: 3,
-                    delay: i * 0.2,
-                    ease: "power1.in",
+                    y: -11, // Move to the bottom neuron
+                    duration: 5,
+                    delay: i * 0.4,
+                    ease: "power2.in",
                     onComplete: () => {
-                        v.material.color.set(0x00ff00); // Binding to receptors
+                        v.material.color.set(0x00ff00);
                         v.material.emissive.set(0x00ff00);
+                        document.getElementById('current-stage').innerText = "Stage 4: Binding";
+                        document.getElementById('instruction').innerText = "Chemical signal received!";
                     }
                 });
             });
         }
 
-        // 6. ANIMATION LOOP
+        // --- 5. RENDER LOOP ---
         function animate() {
             requestAnimationFrame(animate);
-            terminal.rotation.x += 0.001;
+            terminal.rotation.y += 0.005;
             composer.render();
         }
         animate();
 
-        // Handle Resize
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
