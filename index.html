@@ -3,26 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Realistic Synapse | Ahmad Ghozlan</title>
+    <title>The Realistic Synapse | Mobile Optimized</title>
     <style>
-        body { margin: 0; background: #000; font-family: 'Arial', sans-serif; color: white; overflow: hidden; }
-        canvas { position: fixed; top: 0; left: 0; z-index: 1; }
-        #scroll-container { height: 600vh; position: relative; z-index: 2; pointer-events: none; }
+        body { margin: 0; background: #000; font-family: Arial, sans-serif; color: white; overflow-x: hidden; }
+        /* CRITICAL: Ensure the canvas is visible and at the back */
+        canvas { position: fixed; top: 0; left: 0; z-index: -1; width: 100vw; height: 100vh; }
         
-        /* Interactive UI */
-        #hud { position: fixed; top: 40px; left: 40px; z-index: 10; border-left: 3px solid #00ffff; padding-left: 20px; }
-        #stage-title { color: #00ffff; font-size: 1.8rem; font-weight: bold; text-transform: uppercase; }
+        #scroll-container { height: 500vh; position: relative; z-index: 1; pointer-events: none; }
+        
+        #hud { position: fixed; top: 30px; left: 20px; z-index: 10; border-left: 2px solid #00ffff; padding-left: 15px; pointer-events: none; }
+        #stage-title { color: #00ffff; font-size: 1.2rem; font-weight: bold; text-transform: uppercase; }
         
         #tutor-overlay {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 380px; background: rgba(5, 10, 20, 0.98); border: 1px solid #00ffff;
-            padding: 40px; border-radius: 5px; display: none; z-index: 100; text-align: center;
-            box-shadow: 0 0 50px rgba(0, 255, 255, 0.2);
+            width: 85%; max-width: 350px; background: rgba(5, 10, 20, 0.95); border: 1px solid #00ffff;
+            padding: 25px; border-radius: 10px; display: none; z-index: 100; text-align: center;
         }
         .tutor-btn {
-            display: block; width: 100%; padding: 15px; margin: 15px 0;
-            background: #00ffff; color: #000; border: none;
-            cursor: pointer; font-weight: bold; text-transform: uppercase;
+            display: block; width: 100%; padding: 12px; margin: 10px 0;
+            background: #00ffff; color: #000; border: none; cursor: pointer; font-weight: bold;
         }
     </style>
 </head>
@@ -30,171 +29,139 @@
 
     <div id="hud">
         <div id="stage-title">The Neural Gap</div>
-        <p id="stage-desc">Scroll to descend into the microscopic world.</p>
+        <p style="font-size: 0.8rem;">Scroll down to begin...</p>
     </div>
 
     <div id="tutor-overlay">
-        <h2 style="color:#00ffff;">SYSTEM CHECK</h2>
-        <p id="tutor-text">Anatomical signal reached. Vesicles are primed. What ion must flood the terminal to initiate exocytosis?</p>
+        <h3 style="color:#00ffff;">BIOLOGY CHECK</h3>
+        <p id="tutor-text">The impulse reached the bulb. Which ion triggers the release?</p>
         <div id="tutor-options"></div>
     </div>
 
     <div id="scroll-container"></div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
-    <script type="importmap">
-    {
-        "imports": {
-            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-        }
-    }
-    </script>
+    <script>
+        // --- MOBILE COMPATIBLE THREE.JS ---
+        let scene, camera, renderer, terminal, vesicles = [], dendrite;
 
-    <script type="module">
-        import * as THREE from 'three';
-        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit for performance
+            document.body.appendChild(renderer.domElement);
 
-        // --- SCENE & REALISTIC LIGHTING ---
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.toneMapping = THREE.ReinhardToneMapping;
-        document.body.appendChild(renderer.domElement);
+            // Lighting
+            const ambient = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambient);
+            const point = new THREE.PointLight(0x00ffff, 1, 100);
+            point.position.set(5, 5, 5);
+            scene.add(point);
 
-        // Lights to show "Real" textures
-        const light = new THREE.PointLight(0xffffff, 100, 100);
-        light.position.set(10, 10, 10);
-        scene.add(light);
-        scene.add(new THREE.AmbientLight(0x404040, 2));
+            // 1. Pre-Synaptic Terminal (The Bulb)
+            const termGeom = new THREE.SphereGeometry(4, 32, 32);
+            const termMat = new THREE.MeshPhongMaterial({ 
+                color: 0x2244ff, 
+                wireframe: true, 
+                transparent: true, 
+                opacity: 0.4 
+            });
+            terminal = new THREE.Mesh(termGeom, termMat);
+            terminal.position.y = 10;
+            scene.add(terminal);
 
-        const composer = new EffectComposer(renderer);
-        composer.addPass(new RenderPass(scene, camera));
-        composer.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85));
+            // 2. Vesicles
+            for (let i = 0; i < 8; i++) {
+                const v = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.4, 12, 12),
+                    new THREE.MeshBasicMaterial({ color: 0xffff00 })
+                );
+                v.position.set((Math.random()-0.5)*3, 10 + (Math.random()-0.5)*3, (Math.random()-0.5)*3);
+                scene.add(v);
+                vesicles.push(v);
+            }
 
-        // --- LOADING REAL GEOMETRY ---
-        // Since we are on GitHub, we can use a sample "Cell" model 
-        // For the demo, I will build a highly detailed organic "Terminal" shape
-        const loader = new GLTFLoader();
-        
-        // Let's create a more organic looking Terminal group
-        const neuronGroup = new THREE.Group();
-        scene.add(neuronGroup);
+            // 3. Post-Synaptic Membrane
+            const denGeom = new THREE.BoxGeometry(20, 1, 10);
+            const denMat = new THREE.MeshPhongMaterial({ color: 0xff00ff, wireframe: true });
+            dendrite = new THREE.Mesh(denGeom, denMat);
+            dendrite.position.y = -10;
+            scene.add(dendrite);
 
-        const organicMat = new THREE.MeshStandardMaterial({ 
-            color: 0x2244ff, 
-            roughness: 0.1, 
-            metalness: 0.5,
-            emissive: 0x1122aa,
-            emissiveIntensity: 0.2
-        });
+            camera.position.set(0, 10, 20);
 
-        // The "Real" bulb shape
-        const bulb = new THREE.Mesh(new THREE.SphereGeometry(5, 64, 64), organicMat);
-        bulb.scale.set(1, 1.5, 1);
-        neuronGroup.add(bulb);
-
-        // The "Axon" tail
-        const axon = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 20, 32), organicMat);
-        axon.position.y = 15;
-        neuronGroup.add(axon);
-
-        // Vesicles (The real messengers)
-        const vesicles = [];
-        for (let i = 0; i < 12; i++) {
-            const v = new THREE.Mesh(
-                new THREE.SphereGeometry(0.5, 16, 16),
-                new THREE.MeshStandardMaterial({ color: 0xffff00, emissive: 0xffff00, emissiveIntensity: 1 })
-            );
-            v.position.set((Math.random()-0.5)*4, (Math.random()-0.5)*4, (Math.random()-0.5)*4);
-            neuronGroup.add(v);
-            vesicles.push(v);
+            setupAnimation();
+            animate();
         }
 
-        // Post-Synaptic Membrane (The realistic receiver)
-        const membraneGeom = new THREE.TorusGeometry(15, 3, 16, 100, Math.PI);
-        const membrane = new THREE.Mesh(membraneGeom, organicMat);
-        membrane.rotation.x = Math.PI / 2;
-        membrane.position.y = -20;
-        scene.add(membrane);
+        function setupAnimation() {
+            gsap.registerPlugin(ScrollTrigger);
+            
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: "#scroll-container",
+                    start: "top top",
+                    end: "bottom bottom",
+                    scrub: 1
+                }
+            });
 
-        camera.position.set(0, 20, 30);
-        camera.lookAt(0, 0, 0);
-
-        // --- CINEMATIC ANIMATION ---
-        gsap.registerPlugin(ScrollTrigger);
-        const mainTl = gsap.timeline({
-            scrollTrigger: {
+            tl.to(camera.position, { y: -5, z: 25, duration: 10 });
+            
+            ScrollTrigger.create({
                 trigger: "#scroll-container",
-                start: "top top",
-                end: "bottom bottom",
-                scrub: 1
-            }
-        });
+                start: "40% top",
+                onEnter: () => {
+                    document.body.style.overflow = "hidden";
+                    document.getElementById('tutor-overlay').style.display = 'block';
+                    renderTutor();
+                }
+            });
+        }
 
-        mainTl.to(camera.position, { y: 0, z: 25, duration: 5 });
-        mainTl.to("#stage-title", { textContent: "ARRIVAL: AXON TERMINAL", duration: 0.1 }, 1);
-
-        // AI TUTOR TRIGGER
-        ScrollTrigger.create({
-            trigger: "#scroll-container",
-            start: "40% top",
-            onEnter: () => {
-                document.body.style.overflow = "hidden";
-                document.getElementById('tutor-overlay').style.display = 'block';
-                setupTutor();
-            }
-        });
-
-        function setupTutor() {
-            const optCont = document.getElementById('tutor-options');
-            optCont.innerHTML = '';
-            ["Sodium", "Calcium", "Chloride"].forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = 'tutor-btn';
-                btn.innerText = opt;
-                btn.onclick = () => {
+        function renderTutor() {
+            const cont = document.getElementById('tutor-options');
+            cont.innerHTML = '';
+            ["Sodium", "Calcium"].forEach(opt => {
+                const b = document.createElement('button');
+                b.className = 'tutor-btn';
+                b.innerText = opt;
+                b.onclick = () => {
                     if(opt === "Calcium") {
-                        document.getElementById('tutor-text').innerText = "Correct. Ca2+ channels open, allowing vesicles to dock.";
-                        setTimeout(() => {
-                            document.getElementById('tutor-overlay').style.display = 'none';
-                            document.body.style.overflow = "auto";
-                            releaseSequence();
-                        }, 1500);
+                        document.getElementById('tutor-overlay').style.display = 'none';
+                        document.body.style.overflow = "auto";
+                        release();
                     }
                 };
-                optCont.appendChild(btn);
+                cont.appendChild(b);
             });
         }
 
-        function releaseSequence() {
-            document.getElementById('stage-title').innerText = "EXOCYTOSIS IN PROGRESS";
+        function release() {
             vesicles.forEach((v, i) => {
-                gsap.to(v.position, {
-                    y: -18,
-                    duration: 4,
-                    delay: i * 0.2,
-                    onComplete: () => {
-                        v.scale.set(1.5, 1.5, 1.5); // Binding effect
-                        v.material.color.set(0x00ff00);
-                    }
-                });
+                gsap.to(v.position, { y: -9.5, duration: 4, delay: i * 0.2 });
             });
-            gsap.to(camera.position, { y: -15, z: 20, duration: 5 });
         }
 
         function animate() {
             requestAnimationFrame(animate);
-            neuronGroup.rotation.y += 0.002;
-            composer.render();
+            if(terminal) terminal.rotation.y += 0.005;
+            renderer.render(scene, camera);
         }
-        animate();
+
+        // Initialize when window loads
+        window.onload = init;
+        window.onresize = () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        };
     </script>
 </body>
 </html>
