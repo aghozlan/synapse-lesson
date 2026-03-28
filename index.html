@@ -1,138 +1,800 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Synapse: The Cinematic Journey</title>
-    <style>
-        body { margin: 0; background: #000; font-family: 'Helvetica', sans-serif; overflow: hidden; }
-        canvas { position: fixed; top: 0; left: 0; }
-        #overlay {
-            position: fixed; top: 10%; left: 5%; color: #00ffff; z-index: 10;
-            border-left: 3px solid #00ffff; padding-left: 15px;
-            text-transform: uppercase; letter-spacing: 2px;
-        }
-        #sub-text { color: white; font-size: 0.8rem; margin-top: 5px; opacity: 0.8; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SynapseLab 3D — Synaptic Transmission | Ahmad Ghozlan</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#02030a;--panel:#080c1a;--panel2:#0d1228;
+  --border:rgba(80,160,255,.1);--border2:rgba(80,160,255,.2);
+  --text:#dde8ff;--muted:#3a4870;--muted2:#7a90c8;
+  --blue:#3c82ff;--cyan:#00cfff;--green:#00e676;
+  --purple:#aa66ff;--pink:#ff66aa;--orange:#ff8800;
+  --yellow:#ffd600;--red:#ff4466;
+  --fh:'Outfit',sans-serif;--fm:'DM Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:var(--fh);color:var(--text);}
+
+/* SCENE */
+#canvas3d{position:fixed;inset:0;z-index:1;}
+
+/* OVERLAY UI */
+.overlay{position:fixed;inset:0;z-index:10;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:20px;}
+
+/* TOP BAR */
+.top-bar{display:flex;align-items:flex-start;justify-content:space-between;pointer-events:all;}
+.lab-info{}
+.lab-tag{font-family:var(--fm);font-size:.58rem;color:var(--cyan);text-transform:uppercase;letter-spacing:3px;border:1px solid rgba(0,207,255,.2);padding:3px 10px;border-radius:2px;display:inline-block;margin-bottom:6px;}
+.lab-name{font-size:1.1rem;font-weight:800;letter-spacing:-0.5px;color:#fff;}
+.lab-name span{color:var(--purple);}
+.top-controls{display:flex;gap:8px;}
+.ctrl-btn{padding:7px 16px;border-radius:6px;border:1px solid var(--border2);background:rgba(8,12,26,.8);color:var(--text);font-family:var(--fh);font-weight:600;font-size:.76rem;cursor:pointer;transition:all .2s;backdrop-filter:blur(8px);}
+.ctrl-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+.ctrl-btn.active{background:var(--cyan);color:#000;border-color:var(--cyan);}
+
+/* SCENE TITLE */
+.scene-title{text-align:center;pointer-events:none;}
+.scene-num{font-family:var(--fm);font-size:.58rem;color:var(--cyan);text-transform:uppercase;letter-spacing:3px;margin-bottom:6px;opacity:0;transition:opacity .5s;}
+.scene-text{font-size:clamp(1rem,2.5vw,1.4rem);font-weight:700;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.9);opacity:0;transition:opacity .5s;max-width:600px;margin:0 auto;line-height:1.4;}
+.scene-sub{font-size:.8rem;color:var(--muted2);margin-top:6px;opacity:0;transition:opacity .5s;font-style:italic;}
+
+/* MOLECULE LEGEND */
+.legend{background:rgba(8,12,26,.85);border:1px solid var(--border);border-radius:10px;padding:12px 16px;backdrop-filter:blur(12px);max-width:220px;pointer-events:all;}
+.legend-title{font-family:var(--fm);font-size:.58rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;}
+.legend-item{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:.76rem;color:var(--muted2);}
+.legend-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+.legend-item strong{color:var(--text);}
+
+/* BOTTOM: STEP CONTROLS */
+.bottom-area{display:flex;flex-direction:column;gap:12px;pointer-events:all;}
+.step-row{display:flex;align-items:center;gap:10px;}
+.step-dots{display:flex;gap:6px;}
+.step-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);transition:all .3s;cursor:pointer;}
+.step-dot.active{background:var(--cyan);transform:scale(1.3);}
+.step-dot.done{background:var(--purple);}
+.step-nav{display:flex;gap:8px;margin-left:auto;}
+.nav-btn{padding:8px 20px;border-radius:6px;border:1px solid var(--border2);background:rgba(8,12,26,.85);color:var(--text);font-family:var(--fh);font-weight:700;font-size:.82rem;cursor:pointer;transition:all .2s;backdrop-filter:blur(8px);}
+.nav-btn:hover{border-color:var(--cyan);}
+.nav-btn.primary{background:var(--cyan);color:#000;border-color:var(--cyan);}
+.nav-btn:disabled{opacity:.3;cursor:not-allowed;}
+
+/* INFO PANEL */
+.info-panel{background:rgba(8,12,26,.9);border:1px solid var(--border2);border-radius:10px;padding:14px 18px;backdrop-filter:blur(12px);max-width:380px;}
+.info-step-label{font-family:var(--fm);font-size:.6rem;color:var(--purple);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;}
+.info-title{font-weight:700;font-size:.92rem;color:#fff;margin-bottom:6px;}
+.info-text{font-size:.78rem;color:var(--muted2);line-height:1.7;}
+.info-text strong{color:var(--cyan);}
+
+/* BACK TO LAB */
+.back-btn{position:fixed;bottom:20px;right:20px;z-index:20;padding:10px 20px;border-radius:7px;background:var(--purple);color:#fff;border:none;font-family:var(--fh);font-weight:700;font-size:.82rem;cursor:pointer;transition:all .2s;box-shadow:0 4px 20px rgba(170,102,255,.3);}
+.back-btn:hover{background:#8844cc;transform:translateY(-2px);}
+
+/* LOADING */
+#loading{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .5s;}
+#loading.hidden{opacity:0;pointer-events:none;}
+.load-title{font-size:1.4rem;font-weight:800;color:#fff;margin-bottom:8px;}
+.load-title span{color:var(--purple);}
+.load-sub{font-size:.8rem;color:var(--muted2);margin-bottom:24px;}
+.load-bar{width:200px;height:3px;background:var(--panel2);border-radius:2px;overflow:hidden;}
+.load-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--cyan));width:0%;transition:width .3s;border-radius:2px;}
+</style>
 </head>
 <body>
 
-    <div id="overlay">
-        <div id="status">Initializing Simulation...</div>
-        <div id="sub-text">Preparing Neural Pathway</div>
+<div id="loading">
+  <div class="load-title">Synapse<span>Lab</span> 3D</div>
+  <div class="load-sub">Loading Three.js · Building 3D synapse...</div>
+  <div class="load-bar"><div class="load-fill" id="loadFill"></div></div>
+</div>
+
+<canvas id="canvas3d"></canvas>
+
+<!-- OVERLAY -->
+<div class="overlay">
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="lab-info">
+      <div class="lab-tag">Biology · Nervous System</div>
+      <div class="lab-name">Synapse<span>Lab</span> 3D</div>
+    </div>
+    <div class="top-controls">
+      <button class="ctrl-btn" id="autoBtn" onclick="toggleAuto()">▶ Auto Play</button>
+      <button class="ctrl-btn" onclick="toggleRotate()" id="rotBtn">🔄 Orbit On</button>
+      <button class="ctrl-btn" onclick="window.open('synapselab.html','_self')">← Back to Lab</button>
+    </div>
+  </div>
+
+  <!-- SCENE TITLE (centre) -->
+  <div class="scene-title">
+    <div class="scene-num" id="sceneNum">Scene 1 of 8</div>
+    <div class="scene-text" id="sceneText">The Synaptic Knob</div>
+    <div class="scene-sub" id="sceneSub">Zoom in to explore the machinery of neural communication</div>
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="bottom-area">
+    <div style="display:flex;gap:16px;align-items:flex-end;">
+
+      <!-- INFO PANEL -->
+      <div class="info-panel">
+        <div class="info-step-label" id="infoLabel">Step 1</div>
+        <div class="info-title" id="infoTitle">The Synaptic Knob</div>
+        <div class="info-text" id="infoText">The swollen terminal of the presynaptic neuron. Inside: <strong>mitochondria</strong> (orange) provide ATP energy, and <strong>synaptic vesicles</strong> (purple spheres) hold thousands of neurotransmitter molecules ready for release.</div>
+      </div>
+
+      <!-- LEGEND -->
+      <div class="legend">
+        <div class="legend-title">Molecule Key</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#aa66ff;"></div><strong>Vesicles</strong> — NT containers</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#00cfff;"></div><strong>Ca²⁺</strong> — Calcium ions</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#00e676;"></div><strong>ACh</strong> — Acetylcholine</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff66aa;"></div><strong>Receptors</strong> — Lock proteins</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ffd600;"></div><strong>Enzymes</strong> — AChE breakdown</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff8800;"></div><strong>Mitochondria</strong> — Energy</div>
+      </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- STEP CONTROLS -->
+    <div class="step-row">
+      <div class="step-dots" id="stepDots"></div>
+      <div class="step-nav">
+        <button class="nav-btn" id="prevBtn" onclick="prevScene()" disabled>← Prev</button>
+        <button class="nav-btn primary" id="nextBtn" onclick="nextScene()">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-    <script>
-        let scene, camera, renderer, terminal, membrane, vesicles = [];
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════
+// SYNAPSE 3D — Full Three.js Animation
+// Ahmad Ghozlan · SynapseLab · Grade 9 Biology
+// ═══════════════════════════════════════════════════════════
 
-        function init() {
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            document.body.appendChild(renderer.domElement);
+// ── SCENE DATA ──────────────────────────────────────────────
+const SCENES = [
+  {
+    num:'Scene 1 of 8', text:'The Synaptic Knob', sub:'Inside the terminal of the presynaptic neuron',
+    label:'Step 1 — Setup', title:'The Synaptic Knob',
+    info:'The swollen terminal of the presynaptic neuron. Inside: <strong>mitochondria</strong> (orange) provide ATP energy, and <strong>synaptic vesicles</strong> (purple spheres) hold thousands of neurotransmitter molecules ready for release.',
+    cam:{x:0,y:0,z:18}, action:'scene1'
+  },
+  {
+    num:'Scene 2 of 8', text:'Vesicles Forming', sub:'Neurotransmitters packaged and ready',
+    label:'Step 2 — Vesicle Formation', title:'Synaptic Vesicles',
+    info:'<strong>Synaptic vesicles</strong> are membrane-bound sacs. Each one contains thousands of <strong>neurotransmitter molecules</strong> (ACh shown in green). They form continuously and drift toward the presynaptic membrane.',
+    cam:{x:0,y:2,z:14}, action:'scene2'
+  },
+  {
+    num:'Scene 3 of 8', text:'Ca²⁺ Ions Rush In', sub:'Action potential triggers calcium influx',
+    label:'Step 3 — Calcium Influx', title:'Voltage-Gated Ca²⁺ Channels Open',
+    info:'The <strong>action potential</strong> arrives and opens voltage-gated calcium channels in the presynaptic membrane. <strong>Ca²⁺ ions</strong> (cyan) flood into the synaptic knob — this is the trigger for neurotransmitter release.',
+    cam:{x:-3,y:0,z:12}, action:'scene3'
+  },
+  {
+    num:'Scene 4 of 8', text:'Exocytosis', sub:'Vesicles fuse with the membrane',
+    label:'Step 4 — Exocytosis', title:'Vesicles Fuse & Release',
+    info:'Calcium ions cause vesicles to fuse with the <strong>presynaptic membrane</strong>. This process is <strong>exocytosis</strong>. Each fusion event releases thousands of ACh molecules into the 20 nanometre synaptic cleft.',
+    cam:{x:0,y:-2,z:11}, action:'scene4'
+  },
+  {
+    num:'Scene 5 of 8', text:'Crossing the Cleft', sub:'20 nanometres — 5,000× thinner than a hair',
+    label:'Step 5 — Diffusion', title:'Neurotransmitters Diffuse Across',
+    info:'ACh molecules <strong>diffuse</strong> across the synaptic cleft in milliseconds. The gap is only <strong>20 nanometres</strong> — so tiny that diffusion is almost instantaneous. Watch the green molecules drift toward receptor proteins.',
+    cam:{x:0,y:0,z:9}, action:'scene5'
+  },
+  {
+    num:'Scene 6 of 8', text:'Lock & Key Binding', sub:'Receptor proteins change shape on contact',
+    label:'Step 6 — Receptor Binding', title:'Complementary Binding',
+    info:'ACh molecules bind to <strong>complementary receptor proteins</strong> (pink) on the postsynaptic membrane. Like a lock and key — only the correct molecule fits. Binding opens <strong>ion channels</strong>, generating a new action potential.',
+    cam:{x:0,y:-4,z:7}, action:'scene6'
+  },
+  {
+    num:'Scene 7 of 8', text:'Signal Termination', sub:'Enzyme breakdown & reuptake',
+    label:'Step 7 — Clearance', title:'Acetylcholinesterase & Reuptake',
+    info:'The signal must be terminated. <strong>Acetylcholinesterase</strong> (yellow enzyme molecules) breaks down ACh in the cleft. Some molecules are also taken back up into the presynaptic neuron by <strong>reuptake pumps</strong> for recycling.',
+    cam:{x:2,y:-2,z:10}, action:'scene7'
+  },
+  {
+    num:'Scene 8 of 8', text:'Electrical → Chemical → Electrical', sub:'The complete synaptic transmission cycle',
+    label:'Step 8 — Summary', title:'The Complete Synapse',
+    info:'The full sequence: <strong>Action potential arrives → Ca²⁺ enters → Vesicles fuse → ACh released → Diffuses across cleft → Binds receptors → New AP generated → ACh destroyed/recycled</strong>. This happens in under 1 millisecond.',
+    cam:{x:0,y:0,z:22}, action:'scene8'
+  }
+];
 
-            // Lighting for "Real" textures
-            const ambient = new THREE.AmbientLight(0x404040, 2); 
-            scene.add(ambient);
-            const spot = new THREE.SpotLight(0x00ffff, 2);
-            spot.position.set(10, 20, 10);
-            scene.add(spot);
+// ── THREE.JS SETUP ───────────────────────────────────────────
+const canvas = document.getElementById('canvas3d');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:false});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.2;
 
-            createAnatomy();
-            startCinematic();
-            animate();
-        }
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x02030a);
+scene.fog = new THREE.FogExp2(0x02030a, 0.04);
 
-        function createAnatomy() {
-            // 1. Organic Pre-Synaptic Terminal (The Bulb)
-            const termGeom = new THREE.SphereGeometry(5, 64, 64);
-            const termMat = new THREE.MeshStandardMaterial({ 
-                color: 0x1a2a6c, 
-                roughness: 0.2, 
-                metalness: 0.3,
-                transparent: true,
-                opacity: 0.6
-            });
-            terminal = new THREE.Mesh(termGeom, termMat);
-            terminal.scale.set(1, 1.4, 1);
-            terminal.position.y = 10;
-            scene.add(terminal);
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 200);
+camera.position.set(0, 0, 18);
 
-            // 2. The Axon (The realistic connection)
-            const axonGeom = new THREE.CylinderGeometry(1.5, 1.5, 20, 32);
-            const axon = new THREE.Mesh(axonGeom, termMat);
-            axon.position.y = 22;
-            scene.add(axon);
+// ── LIGHTING ─────────────────────────────────────────────────
+const ambient = new THREE.AmbientLight(0x1a1a2e, 3);
+scene.add(ambient);
+const mainLight = new THREE.PointLight(0x6644ff, 8, 40);
+mainLight.position.set(0, 8, 5);
+scene.add(mainLight);
+const fillLight = new THREE.PointLight(0x0088ff, 4, 30);
+fillLight.position.set(-8, -4, 8);
+scene.add(fillLight);
+const rimLight = new THREE.PointLight(0xff44aa, 3, 25);
+rimLight.position.set(8, 0, -5);
+scene.add(rimLight);
 
-            // 3. Vesicles (Messengers)
-            const vGeom = new THREE.SphereGeometry(0.4, 32, 32);
-            const vMat = new THREE.MeshStandardMaterial({ 
-                color: 0xffff00, 
-                emissive: 0xffff00, 
-                emissiveIntensity: 1 
-            });
-            for(let i=0; i<15; i++) {
-                const v = new THREE.Mesh(vGeom, vMat);
-                v.position.set((Math.random()-0.5)*4, 10 + (Math.random()-0.5)*3, (Math.random()-0.5)*4);
-                scene.add(v);
-                vesicles.push(v);
-            }
+// ── MATERIALS ────────────────────────────────────────────────
+function mat(color, emissive, opacity=1, transparent=false, rough=0.3, metal=0.1){
+  return new THREE.MeshStandardMaterial({
+    color, emissive, emissiveIntensity:0.4,
+    roughness:rough, metalness:metal,
+    transparent, opacity
+  });
+}
+function glowMat(color, intensity=0.8){
+  return new THREE.MeshStandardMaterial({
+    color, emissive:color, emissiveIntensity:intensity,
+    roughness:0.1, metalness:0.2,
+    transparent:true, opacity:0.85
+  });
+}
 
-            // 4. Post-Synaptic Membrane (Realistic Curve)
-            const memGeom = new THREE.TorusGeometry(15, 3, 16, 100, Math.PI);
-            membrane = new THREE.Mesh(memGeom, termMat);
-            membrane.rotation.x = Math.PI/2;
-            membrane.position.y = -15;
-            scene.add(membrane);
+const MATS = {
+  presynaptic: mat(0x2244aa, 0x1133aa, 0.7, true, 0.6),
+  postsynaptic: mat(0x1a3388, 0x112266, 0.7, true, 0.6),
+  vesicle: glowMat(0x9944ff),
+  vesicleInner: glowMat(0x00e676, 0.6),
+  calcium: glowMat(0x00cfff, 1.2),
+  ach: glowMat(0x00e676, 1.0),
+  receptor: glowMat(0xff4488, 0.8),
+  receptorOpen: glowMat(0xff88cc, 1.2),
+  enzyme: glowMat(0xffcc00, 1.0),
+  mito: mat(0xff6600, 0xdd4400, 0.9, false, 0.4),
+  membrane: mat(0x334499, 0x223377, 0.5, true, 0.7),
+  cleft: mat(0x080c1a, 0x000000, 0.3, true),
+};
 
-            camera.position.set(0, 10, 30);
-        }
+// ── GEOMETRY HELPERS ─────────────────────────────────────────
+function sphere(r, mat, x=0, y=0, z=0, seg=16){
+  const m = new THREE.Mesh(new THREE.SphereGeometry(r, seg, seg), mat);
+  m.position.set(x,y,z);
+  return m;
+}
+function box(w,h,d, mat, x=0,y=0,z=0){
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), mat);
+  m.position.set(x,y,z);
+  return m;
+}
+function cylinder(rt,rb,h,mat,x=0,y=0,z=0){
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,16), mat);
+  m.position.set(x,y,z);
+  return m;
+}
 
-        function startCinematic() {
-            const mainTl = gsap.timeline({ repeat: -1 });
+// ── BUILD SYNAPSE STRUCTURE ───────────────────────────────────
+const synapseGroup = new THREE.Group();
+scene.add(synapseGroup);
 
-            // STEP 1: Impulse Arrival
-            mainTl.to("#status", { textContent: "1. Action Potential Arrival", duration: 1 });
-            mainTl.to(camera.position, { y: 12, z: 20, duration: 3, ease: "power2.inOut" });
+// Presynaptic knob (large hemisphere)
+const knobGeo = new THREE.SphereGeometry(6, 32, 32, 0, Math.PI*2, 0, Math.PI/2);
+const knob = new THREE.Mesh(knobGeo, MATS.presynaptic);
+knob.position.y = 1;
+synapseGroup.add(knob);
 
-            // STEP 2: Calcium Influx (Glow effect)
-            mainTl.to("#status", { textContent: "2. Calcium Influx (Ca2+)", duration: 1 });
-            mainTl.to(terminal.material, { emissiveIntensity: 2, duration: 1, color: 0x00ffff });
+// Axon leading into knob
+const axon = cylinder(1.2, 1.5, 8, MATS.presynaptic, 0, 7, 0);
+synapseGroup.add(axon);
 
-            // STEP 3: Vesicle Docking & Release
-            mainTl.to("#status", { textContent: "3. Exocytosis / Neurotransmitter Release", duration: 1 });
-            vesicles.forEach((v, i) => {
-                mainTl.to(v.position, { 
-                    y: -14, 
-                    duration: 4, 
-                    ease: "power1.in",
-                    delay: i * 0.1 
-                }, "release");
-            });
-            mainTl.to(camera.position, { y: -5, z: 25, duration: 5, ease: "power2.inOut" }, "release");
+// Presynaptic membrane (flat disk at bottom of knob)
+const preMem = new THREE.Mesh(
+  new THREE.CircleGeometry(5.8, 32),
+  mat(0x4466cc, 0x3355bb, 0.9, false, 0.2)
+);
+preMem.rotation.x = -Math.PI/2;
+preMem.position.y = 1;
+synapseGroup.add(preMem);
 
-            // STEP 4: Receptor Binding
-            mainTl.to("#status", { textContent: "4. Receptor Binding & Signal Success", duration: 1 });
-            mainTl.to(membrane.material, { emissive: 0x00ff00, emissiveIntensity: 2, duration: 1 });
-            
-            // RESET
-            mainTl.to("#status", { textContent: "Restarting Cycle...", duration: 2 });
-            mainTl.to(camera.position, { y: 10, z: 30, duration: 2 });
-        }
+// Synaptic cleft gap (space between membranes)
+// Postsynaptic membrane
+const postMem = new THREE.Mesh(
+  new THREE.CircleGeometry(7, 32),
+  mat(0x223388, 0x112266, 0.9, false, 0.2)
+);
+postMem.rotation.x = -Math.PI/2;
+postMem.position.y = -1.2;
+synapseGroup.add(postMem);
 
-        function animate() {
-            requestAnimationFrame(animate);
-            if(terminal) terminal.rotation.y += 0.002;
-            renderer.render(scene, camera);
-        }
+// Postsynaptic neuron body
+const postBody = new THREE.Mesh(
+  new THREE.SphereGeometry(7, 32, 32, 0, Math.PI*2, Math.PI/2, Math.PI/2),
+  MATS.postsynaptic
+);
+postBody.position.y = -1.2;
+synapseGroup.add(postBody);
 
-        window.onload = init;
-    </script>
+// Receptor proteins on postsynaptic membrane
+const receptorGroup = new THREE.Group();
+synapseGroup.add(receptorGroup);
+const receptorPositions = [];
+for(let i=0;i<12;i++){
+  const angle = (i/12)*Math.PI*2;
+  const r = 2.5 + Math.random()*2;
+  const x = Math.cos(angle)*r, z = Math.sin(angle)*r;
+  receptorPositions.push({x,z});
+  const rec = new THREE.Group();
+  // U-shaped receptor
+  const recBody = cylinder(0.25, 0.3, 0.8, MATS.receptor, x, -1.2, z);
+  const recLeft = cylinder(0.15, 0.15, 0.5, MATS.receptor, x-0.3, -0.85, z);
+  const recRight = cylinder(0.15, 0.15, 0.5, MATS.receptor, x+0.3, -0.85, z);
+  receptorGroup.add(recBody, recLeft, recRight);
+}
+
+// Mitochondria inside knob
+const mitoGroup = new THREE.Group();
+synapseGroup.add(mitoGroup);
+const mitoPositions = [
+  [-1.5, 3.5, 0.5],[-2.5, 2.5, -1],[1.8, 3, 1],
+  [0.5, 4, -1.5],[2, 2, -0.5],[-1, 2.5, 1.5]
+];
+mitoPositions.forEach(([x,y,z])=>{
+  const mito = new THREE.Group();
+  const body = new THREE.Mesh(
+    new THREE.SphereGeometry(0.45, 12, 8),
+    MATS.mito.clone()
+  );
+  body.scale.set(2.0, 1, 1.1);
+  body.position.set(x,y,z);
+  // Cristae lines
+  const crista = new THREE.Mesh(
+    new THREE.TorusGeometry(0.3, 0.05, 6, 12),
+    mat(0xff8822, 0xff6600, 0.7)
+  );
+  crista.position.set(x,y,z);
+  crista.rotation.z = Math.PI/2;
+  mitoGroup.add(body, crista);
+});
+
+// ── VESICLES ──────────────────────────────────────────────────
+const vesicleGroup = new THREE.Group();
+synapseGroup.add(vesicleGroup);
+const vesicles = [];
+const vesicleStartPositions = [];
+
+for(let i=0;i<24;i++){
+  const vg = new THREE.Group();
+  const r = 0.4 + Math.random()*0.15;
+  const shell = sphere(r, MATS.vesicle.clone());
+  // NT molecules inside vesicle (tiny green dots)
+  for(let j=0;j<6;j++){
+    const nt = sphere(0.08, MATS.vesicleInner.clone(),
+      (Math.random()-.5)*r*.5,
+      (Math.random()-.5)*r*.5,
+      (Math.random()-.5)*r*.5, 6);
+    vg.add(nt);
+  }
+  vg.add(shell);
+  // Random position inside knob
+  const angle = Math.random()*Math.PI*2;
+  const rad = Math.random()*3.5;
+  const px = Math.cos(angle)*rad;
+  const pz = Math.sin(angle)*rad;
+  const py = 1.5 + Math.random()*3.5;
+  vg.position.set(px, py, pz);
+  vesicleStartPositions.push({x:px, y:py, z:pz});
+  vesicleGroup.add(vg);
+  vesicles.push({group:vg, shell, released:false, fused:false,
+    vx:(Math.random()-.5)*0.005, vy:-0.002, vz:(Math.random()-.5)*0.005,
+    startY:py});
+}
+
+// ── CALCIUM IONS ──────────────────────────────────────────────
+const calciumGroup = new THREE.Group();
+synapseGroup.add(calciumGroup);
+const calciumIons = [];
+for(let i=0;i<30;i++){
+  const ion = sphere(0.18, MATS.calcium.clone(), 0,10,0, 8);
+  ion.visible = false;
+  calciumGroup.add(ion);
+  const angle = Math.random()*Math.PI*2;
+  const rad = Math.random()*4;
+  calciumIons.push({
+    mesh:ion, active:false, delay:Math.random()*2,
+    tx:Math.cos(angle)*rad, ty:1.5+Math.random()*2, tz:Math.sin(angle)*rad,
+    sy:12+Math.random()*3
+  });
+}
+
+// ── ACh MOLECULES (free in cleft) ─────────────────────────────
+const achGroup = new THREE.Group();
+synapseGroup.add(achGroup);
+const achMolecules = [];
+for(let i=0;i<50;i++){
+  const ach = sphere(0.22, MATS.ach.clone(), 0,0,0, 8);
+  ach.visible = false;
+  achGroup.add(ach);
+  const angle = Math.random()*Math.PI*2;
+  const rad = Math.random()*4.5;
+  achMolecules.push({
+    mesh:ach, active:false, bound:false, destroyed:false,
+    x:Math.cos(angle)*rad, z:Math.sin(angle)*rad,
+    startY:1.5+Math.random()*1, targetY:-1.2,
+    speed:0.01+Math.random()*0.02,
+    vx:(Math.random()-.5)*0.02, vy:0, vz:(Math.random()-.5)*0.02,
+    delay:Math.random()*3
+  });
+}
+
+// ── ENZYME MOLECULES ──────────────────────────────────────────
+const enzymeGroup = new THREE.Group();
+synapseGroup.add(enzymeGroup);
+const enzymes = [];
+for(let i=0;i<12;i++){
+  const enz = new THREE.Mesh(
+    new THREE.OctahedronGeometry(0.28, 0),
+    MATS.enzyme.clone()
+  );
+  enz.visible = false;
+  enzymeGroup.add(enz);
+  const angle = Math.random()*Math.PI*2;
+  const rad = 1+Math.random()*3.5;
+  enzymes.push({
+    mesh:enz, active:false,
+    x:Math.cos(angle)*rad, y:-0.3+Math.random()*0.6, z:Math.sin(angle)*rad,
+    rot:Math.random()*Math.PI
+  });
+}
+
+// ── ACTION POTENTIAL WAVE ──────────────────────────────────────
+const apGroup = new THREE.Group();
+scene.add(apGroup);
+const apRing = new THREE.Mesh(
+  new THREE.TorusGeometry(1.5, 0.15, 8, 32),
+  glowMat(0xffff44, 2.0)
+);
+apRing.rotation.x = Math.PI/2;
+apGroup.add(apRing);
+apGroup.position.set(0, 11, 0);
+apGroup.visible = false;
+apGroup.scale.set(0,0,0);
+
+// ── STARS / BACKGROUND PARTICLES ──────────────────────────────
+const starGeo = new THREE.BufferGeometry();
+const starPositions = [];
+for(let i=0;i<500;i++){
+  starPositions.push((Math.random()-.5)*100,(Math.random()-.5)*100,(Math.random()-.5)*100);
+}
+starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPositions,3));
+const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({color:0x334466,size:0.1}));
+scene.add(stars);
+
+// ── CAMERA CONTROLS ───────────────────────────────────────────
+let orbitEnabled = true;
+let autoPlaying = false;
+let autoTimer = null;
+let targetCam = {x:0, y:0, z:18};
+let isDragging = false, lastMX=0, lastMY=0;
+let sphericalTheta=0, sphericalPhi=Math.PI/2, sphericalR=18;
+
+canvas.addEventListener('mousedown', e=>{isDragging=true;lastMX=e.clientX;lastMY=e.clientY;});
+canvas.addEventListener('mousemove', e=>{
+  if(!isDragging||!orbitEnabled)return;
+  const dx=(e.clientX-lastMX)*0.005;
+  const dy=(e.clientY-lastMY)*0.005;
+  sphericalTheta-=dx;
+  sphericalPhi=Math.max(0.2,Math.min(Math.PI-.2,sphericalPhi+dy));
+  lastMX=e.clientX;lastMY=e.clientY;
+});
+canvas.addEventListener('mouseup',()=>isDragging=false);
+canvas.addEventListener('wheel',e=>{
+  sphericalR=Math.max(5,Math.min(30,sphericalR+e.deltaY*0.02));
+},{passive:true});
+
+// Touch support
+canvas.addEventListener('touchstart',e=>{isDragging=true;lastMX=e.touches[0].clientX;lastMY=e.touches[0].clientY;},{passive:true});
+canvas.addEventListener('touchmove',e=>{
+  if(!isDragging)return;
+  const dx=(e.touches[0].clientX-lastMX)*0.005;
+  const dy=(e.touches[0].clientY-lastMY)*0.005;
+  sphericalTheta-=dx;sphericalPhi=Math.max(0.2,Math.min(Math.PI-.2,sphericalPhi+dy));
+  lastMX=e.touches[0].clientX;lastMY=e.touches[0].clientY;
+},{passive:true});
+canvas.addEventListener('touchend',()=>isDragging=false);
+
+function toggleRotate(){
+  orbitEnabled=!orbitEnabled;
+  document.getElementById('rotBtn').textContent=orbitEnabled?'🔄 Orbit On':'🔄 Orbit Off';
+}
+
+// ── SCENE STATE ────────────────────────────────────────────────
+let currentScene = 0;
+let sceneTime = 0;
+
+// Build step dots
+const dotsEl = document.getElementById('stepDots');
+SCENES.forEach((_,i)=>{
+  const d=document.createElement('div');
+  d.className='step-dot'+(i===0?' active':'');
+  d.onclick=()=>goToScene(i);
+  dotsEl.appendChild(d);
+});
+
+function updateUI(){
+  const s=SCENES[currentScene];
+  // Scene title (fade)
+  ['sceneNum','sceneText','sceneSub'].forEach(id=>document.getElementById(id).style.opacity=0);
+  setTimeout(()=>{
+    document.getElementById('sceneNum').textContent=s.num;
+    document.getElementById('sceneText').textContent=s.text;
+    document.getElementById('sceneSub').textContent=s.sub;
+    document.getElementById('infoLabel').textContent=s.label;
+    document.getElementById('infoTitle').textContent=s.title;
+    document.getElementById('infoText').innerHTML=s.info;
+    ['sceneNum','sceneText','sceneSub'].forEach(id=>document.getElementById(id).style.opacity=1);
+  },300);
+  // Dots
+  document.querySelectorAll('.step-dot').forEach((d,i)=>{
+    d.classList.toggle('active',i===currentScene);
+    d.classList.toggle('done',i<currentScene);
+  });
+  document.getElementById('prevBtn').disabled=currentScene===0;
+  document.getElementById('nextBtn').textContent=currentScene===SCENES.length-1?'Restart ↺':'Next →';
+  // Camera target
+  const cam=s.cam;
+  targetCam={x:cam.x,y:cam.y,z:cam.z};
+  sphericalR=cam.z;
+  sceneTime=0;
+  triggerSceneAction(s.action);
+}
+
+function triggerSceneAction(action){
+  switch(action){
+    case 'scene1': resetAll(); break;
+    case 'scene2': animateVesicles(); break;
+    case 'scene3': fireCalcium(); break;
+    case 'scene4': fuseVesicles(); break;
+    case 'scene5': releaseACh(); break;
+    case 'scene6': bindReceptors(); break;
+    case 'scene7': activateEnzymes(); break;
+    case 'scene8': fullSummary(); break;
+  }
+}
+
+function resetAll(){
+  vesicles.forEach((v,i)=>{
+    v.group.position.set(vesicleStartPositions[i].x, vesicleStartPositions[i].y, vesicleStartPositions[i].z);
+    v.group.visible=true;v.group.scale.set(1,1,1);v.released=false;v.fused=false;
+  });
+  calciumIons.forEach(c=>{c.mesh.visible=false;c.active=false;});
+  achMolecules.forEach(a=>{a.mesh.visible=false;a.active=false;a.bound=false;a.destroyed=false;});
+  enzymes.forEach(e=>{e.mesh.visible=false;e.active=false;});
+  apGroup.visible=false;apGroup.scale.set(0,0,0);
+}
+
+function animateVesicles(){
+  // Vesicles gently pulsate and drift slowly downward
+  vesicles.forEach(v=>{v.group.visible=true;});
+}
+
+function fireCalcium(){
+  apGroup.visible=true;
+  setTimeout(()=>{
+    calciumIons.forEach((c,i)=>{
+      setTimeout(()=>{
+        c.mesh.visible=true;c.active=true;
+        c.mesh.position.set((Math.random()-.5)*10, 12, (Math.random()-.5)*10);
+      }, i*60);
+    });
+  }, 500);
+}
+
+function fuseVesicles(){
+  const topVesicles = vesicles.filter(v=>!v.fused).slice(0,10);
+  topVesicles.forEach((v,i)=>{
+    setTimeout(()=>{
+      v.fused=true;
+      v.targetY=1.0;
+    }, i*200);
+  });
+}
+
+function releaseACh(){
+  achMolecules.forEach((a,i)=>{
+    setTimeout(()=>{
+      a.mesh.visible=true;a.active=true;
+      a.mesh.position.set(a.x, a.startY, a.z);
+    }, i*60);
+  });
+}
+
+function bindReceptors(){
+  // ACh molecules animate toward receptor positions
+  achMolecules.slice(0,12).forEach((a,i)=>{
+    a.bound=true;
+    a.boundTarget=receptorPositions[i%receptorPositions.length];
+  });
+}
+
+function activateEnzymes(){
+  enzymes.forEach((e,i)=>{
+    setTimeout(()=>{
+      e.mesh.visible=true;e.active=true;
+      e.mesh.position.set(e.x, e.y, e.z);
+    }, i*100);
+  });
+  // Some ACh gets destroyed
+  achMolecules.forEach((a,i)=>{
+    if(i%3===0)setTimeout(()=>{a.destroyed=true;},500+i*80);
+  });
+}
+
+function fullSummary(){
+  resetAll();
+  setTimeout(()=>fireCalcium(), 200);
+  setTimeout(()=>fuseVesicles(), 1500);
+  setTimeout(()=>releaseACh(), 2500);
+  setTimeout(()=>bindReceptors(), 4000);
+  setTimeout(()=>activateEnzymes(), 5500);
+}
+
+function goToScene(n){
+  currentScene=n;
+  updateUI();
+}
+function nextScene(){
+  if(currentScene<SCENES.length-1){currentScene++;updateUI();}
+  else{currentScene=0;updateUI();}
+}
+function prevScene(){if(currentScene>0){currentScene--;updateUI();}}
+
+function toggleAuto(){
+  autoPlaying=!autoPlaying;
+  document.getElementById('autoBtn').textContent=autoPlaying?'⏸ Pause':'▶ Auto Play';
+  document.getElementById('autoBtn').classList.toggle('active',autoPlaying);
+  if(autoPlaying)scheduleAuto();
+  else{clearTimeout(autoTimer);}
+}
+function scheduleAuto(){
+  if(!autoPlaying)return;
+  autoTimer=setTimeout(()=>{nextScene();scheduleAuto();}, 5000);
+}
+
+// ── ANIMATION LOOP ─────────────────────────────────────────────
+let t=0;
+const clock = new THREE.Clock();
+
+function animate(){
+  requestAnimationFrame(animate);
+  const dt = clock.getDelta();
+  t += dt;
+  sceneTime += dt;
+
+  // Smooth camera
+  if(orbitEnabled&&!isDragging){
+    sphericalTheta += 0.003;
+  }
+  const cx = sphericalR*Math.sin(sphericalPhi)*Math.sin(sphericalTheta)+synapseGroup.position.x;
+  const cy = sphericalR*Math.cos(sphericalPhi)+synapseGroup.position.y;
+  const cz = sphericalR*Math.sin(sphericalPhi)*Math.cos(sphericalTheta)+synapseGroup.position.z;
+  camera.position.lerp(new THREE.Vector3(cx,cy,cz), 0.05);
+  camera.lookAt(synapseGroup.position.x, synapseGroup.position.y-1, synapseGroup.position.z);
+
+  // Pulsating lights
+  mainLight.intensity = 7 + Math.sin(t*1.5)*2;
+  mainLight.position.x = Math.sin(t*0.4)*3;
+  mainLight.position.z = Math.cos(t*0.3)*3;
+
+  // Vesicle animation
+  vesicles.forEach((v,i)=>{
+    const vg=v.group;
+    if(v.fused){
+      vg.position.y = THREE.MathUtils.lerp(vg.position.y, 1.0, 0.05);
+      if(Math.abs(vg.position.y-1.0)<0.1){
+        vg.scale.lerp(new THREE.Vector3(0,0,0), 0.08);
+      }
+    } else {
+      vg.position.y += Math.sin(t*1.2+i*0.8)*0.003;
+      vg.position.x += Math.sin(t*0.8+i)*0.002;
+      vg.rotation.y += 0.01;
+    }
+    vg.children.forEach(c=>{if(c.material)c.material.emissiveIntensity=0.4+Math.sin(t*2+i)*0.2;});
+  });
+
+  // Calcium ions
+  calciumIons.forEach((c,i)=>{
+    if(!c.active)return;
+    const m=c.mesh;
+    if(m.position.y>c.ty){
+      m.position.y-=0.08;
+      m.position.x=THREE.MathUtils.lerp(m.position.x,c.tx,0.02);
+      m.position.z=THREE.MathUtils.lerp(m.position.z,c.tz,0.02);
+    }
+    m.material.emissiveIntensity=0.8+Math.sin(t*4+i)*0.4;
+    m.rotation.x+=0.05;m.rotation.y+=0.04;
+  });
+
+  // Action potential ring
+  if(apGroup.visible){
+    apGroup.scale.lerp(new THREE.Vector3(1,1,1), 0.08);
+    apGroup.position.y-=0.06;
+    apGroup.children[0].material.emissiveIntensity=1+Math.sin(t*8)*0.5;
+    if(apGroup.position.y<1){apGroup.position.y=11;apGroup.scale.set(0,0,0);}
+  }
+
+  // ACh molecules
+  achMolecules.forEach((a,i)=>{
+    if(!a.active)return;
+    const m=a.mesh;
+    if(a.destroyed){
+      m.scale.lerp(new THREE.Vector3(0,0,0), 0.05);
+      return;
+    }
+    if(a.bound&&a.boundTarget){
+      m.position.x=THREE.MathUtils.lerp(m.position.x,a.boundTarget.x,0.03);
+      m.position.y=THREE.MathUtils.lerp(m.position.y,-1.2,0.03);
+      m.position.z=THREE.MathUtils.lerp(m.position.z,a.boundTarget.z,0.03);
+    } else {
+      m.position.y-=a.speed*0.5;
+      m.position.x+=Math.sin(t*2+i*0.5)*0.01;
+      m.position.z+=Math.cos(t*1.5+i*0.7)*0.01;
+      if(m.position.y<-2)m.position.y=a.startY;
+    }
+    m.material.emissiveIntensity=0.8+Math.sin(t*3+i)*0.3;
+    m.rotation.x+=0.03;m.rotation.y+=0.025;
+  });
+
+  // Enzymes
+  enzymes.forEach((e,i)=>{
+    if(!e.active)return;
+    e.mesh.rotation.x+=0.02;e.mesh.rotation.y+=0.03;e.mesh.rotation.z+=0.015;
+    e.mesh.position.y+=Math.sin(t*1.5+i)*0.005;
+    e.mesh.material.emissiveIntensity=0.7+Math.sin(t*3+i)*0.3;
+  });
+
+  // Stars drift
+  stars.rotation.y+=0.0002;stars.rotation.x+=0.0001;
+
+  renderer.render(scene, camera);
+}
+
+// ── RESIZE ────────────────────────────────────────────────────
+window.addEventListener('resize',()=>{
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
+});
+
+// ── LOADING PROGRESS ──────────────────────────────────────────
+let loadPct=0;
+const loadInterval=setInterval(()=>{
+  loadPct+=Math.random()*15;
+  document.getElementById('loadFill').style.width=Math.min(loadPct,90)+'%';
+},100);
+
+setTimeout(()=>{
+  clearInterval(loadInterval);
+  document.getElementById('loadFill').style.width='100%';
+  setTimeout(()=>{
+    document.getElementById('loading').classList.add('hidden');
+    animate();
+    updateUI();
+  },400);
+}, 1200);
+
+</script>
 </body>
 </html>
