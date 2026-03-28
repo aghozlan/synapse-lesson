@@ -129,12 +129,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-famil
       <!-- LEGEND -->
       <div class="legend">
         <div class="legend-title">Molecule Key</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#aa66ff;"></div><strong>Vesicles</strong> — NT containers</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#00cfff;"></div><strong>Ca²⁺</strong> — Calcium ions</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#00e676;"></div><strong>ACh</strong> — Acetylcholine</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#ff66aa;"></div><strong>Receptors</strong> — Lock proteins</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#ffd600;"></div><strong>Enzymes</strong> — AChE breakdown</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#ff8800;"></div><strong>Mitochondria</strong> — Energy</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#cc44ff;"></div><strong>Vesicles</strong> — ACh containers</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#00eeff;"></div><strong>Ca²⁺</strong> — Calcium ions</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#00ff66;"></div><strong>ACh</strong> — Acetylcholine</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff2288;"></div><strong>Receptors</strong> — Postsynaptic</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ffdd00;"></div><strong>AChE</strong> — Enzyme</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff5500;"></div><strong>Mitochondria</strong> — Energy</div>
       </div>
     </div>
 
@@ -177,34 +177,34 @@ const SCENES = [
     cam:{x:-3,y:0,z:12}, action:'scene3'
   },
   {
-    num:'Scene 4 of 8', text:'Exocytosis', sub:'Vesicles fuse with the membrane',
-    label:'Step 4 — Exocytosis', title:'Vesicles Fuse & Release',
-    info:'Calcium ions cause vesicles to fuse with the <strong>presynaptic membrane</strong>. This process is <strong>exocytosis</strong>. Each fusion event releases thousands of ACh molecules into the 20 nanometre synaptic cleft.',
+    num:'Scene 4 of 8', text:'Exocytosis — ACh Released', sub:'Vesicles fuse with the membrane and release neurotransmitters',
+    label:'Step 4 — Exocytosis', title:'ACh Released Into the Cleft',
+    info:'Ca²⁺ triggers <strong>exocytosis</strong>: vesicles fuse with the presynaptic membrane and open — releasing <strong>ACh molecules</strong> (green) into the cleft. The vesicles themselves stay in the presynaptic neuron — only the neurotransmitter molecules cross into the cleft.',
     cam:{x:0,y:-2,z:11}, action:'scene4'
   },
   {
-    num:'Scene 5 of 8', text:'Crossing the Cleft', sub:'20 nanometres — 5,000× thinner than a hair',
-    label:'Step 5 — Diffusion', title:'Neurotransmitters Diffuse Across',
-    info:'ACh molecules <strong>diffuse</strong> across the synaptic cleft in milliseconds. The gap is only <strong>20 nanometres</strong> — so tiny that diffusion is almost instantaneous. Watch the green molecules drift toward receptor proteins.',
+    num:'Scene 5 of 8', text:'ACh Diffuses Across the Cleft', sub:'Only ACh molecules cross — not vesicles',
+    label:'Step 5 — Diffusion Across Cleft', title:'ACh Molecules Diffuse',
+    info:'<strong>ACh molecules only</strong> (not vesicles) diffuse across the 20nm synaptic cleft. The cleft is so narrow that diffusion takes less than a millisecond. The <strong>postsynaptic membrane</strong> (below) carries receptor proteins waiting to bind ACh.',
     cam:{x:0,y:0,z:9}, action:'scene5'
   },
   {
-    num:'Scene 6 of 8', text:'Lock & Key Binding', sub:'Receptor proteins change shape on contact',
-    label:'Step 6 — Receptor Binding', title:'Complementary Binding',
-    info:'ACh molecules bind to <strong>complementary receptor proteins</strong> (pink) on the postsynaptic membrane. Like a lock and key — only the correct molecule fits. Binding opens <strong>ion channels</strong>, generating a new action potential.',
+    num:'Scene 6 of 8', text:'ACh Binds Postsynaptic Receptors', sub:'Lock-and-key on the postsynaptic membrane',
+    label:'Step 6 — Receptor Binding', title:'ACh Binds to Postsynaptic Receptors',
+    info:'ACh molecules bind to <strong>specific receptor proteins</strong> (magenta) on the <strong>postsynaptic</strong> membrane — not the presynaptic. Each receptor is shaped to accept only ACh (lock-and-key). Binding causes the receptor to change shape, opening <strong>Na⁺ ion channels</strong>.',
     cam:{x:0,y:-4,z:7}, action:'scene6'
   },
   {
-    num:'Scene 7 of 8', text:'Signal Termination', sub:'Enzyme breakdown & reuptake',
-    label:'Step 7 — Clearance', title:'Acetylcholinesterase & Reuptake',
-    info:'The signal must be terminated. <strong>Acetylcholinesterase</strong> (yellow enzyme molecules) breaks down ACh in the cleft. Some molecules are also taken back up into the presynaptic neuron by <strong>reuptake pumps</strong> for recycling.',
+    num:'Scene 7 of 8', text:'ACh Removed — Signal Ends', sub:'Reuptake into presynaptic neuron OR enzyme breakdown',
+    label:'Step 7 — Signal Termination', title:'Reuptake & Enzyme Destruction',
+    info:'To end the signal, ACh is removed two ways: <strong>① Reuptake</strong> — ACh pumped back into the presynaptic neuron (orange arrows) for reuse. <strong>② Enzymatic breakdown</strong> — <strong>acetylcholinesterase</strong> (yellow) destroys ACh in the cleft into choline + acetate. Without this, the postsynaptic neuron would fire continuously.',
     cam:{x:2,y:-2,z:10}, action:'scene7'
   },
   {
-    num:'Scene 8 of 8', text:'Electrical → Chemical → Electrical', sub:'The complete synaptic transmission cycle',
-    label:'Step 8 — Summary', title:'The Complete Synapse',
-    info:'The full sequence: <strong>Action potential arrives → Ca²⁺ enters → Vesicles fuse → ACh released → Diffuses across cleft → Binds receptors → New AP generated → ACh destroyed/recycled</strong>. This happens in under 1 millisecond.',
-    cam:{x:0,y:0,z:22}, action:'scene8'
+    num:'Scene 8 of 8', text:'New Impulse in Postsynaptic Neuron', sub:'Electrical → Chemical → Electrical',
+    label:'Step 8 — New Action Potential', title:'Nerve Impulse Transmitted',
+    info:'Na⁺ ions rush into the postsynaptic neuron through open channels → membrane depolarises → <strong>new action potential generated</strong>. The signal has crossed the synapse: <strong>Electrical impulse → Chemical signal (ACh) → Electrical impulse</strong>. This entire process takes under 1 millisecond.',
+    cam:{x:0,y:-6,z:14}, action:'scene8'
   }
 ];
 
@@ -255,18 +255,19 @@ function glowMat(color, intensity=0.8){
 }
 
 const MATS = {
-  presynaptic: mat(0x2244aa, 0x1133aa, 0.7, true, 0.6),
-  postsynaptic: mat(0x1a3388, 0x112266, 0.7, true, 0.6),
-  vesicle: glowMat(0x9944ff),
-  vesicleInner: glowMat(0x00e676, 0.6),
-  calcium: glowMat(0x00cfff, 1.2),
-  ach: glowMat(0x00e676, 1.0),
-  receptor: glowMat(0xff4488, 0.8),
-  receptorOpen: glowMat(0xff88cc, 1.2),
-  enzyme: glowMat(0xffcc00, 1.0),
-  mito: mat(0xff6600, 0xdd4400, 0.9, false, 0.4),
-  membrane: mat(0x334499, 0x223377, 0.5, true, 0.7),
-  cleft: mat(0x080c1a, 0x000000, 0.3, true),
+  // High-contrast palette — works on any device/screen
+  presynaptic: mat(0x1155cc, 0x2266ee, 0.75, true, 0.5),   // bright blue
+  postsynaptic: mat(0x0d3d99, 0x1144bb, 0.75, true, 0.5),   // deeper blue
+  vesicle: glowMat(0xcc44ff, 1.2),     // vivid violet — vesicle shell
+  vesicleInner: glowMat(0x00ff88, 1.0),// bright green — ACh inside vesicle
+  calcium: glowMat(0x00eeff, 1.5),     // bright cyan — Ca²⁺ ions
+  ach: glowMat(0x00ff66, 1.2),         // vivid green — free ACh molecules
+  receptor: glowMat(0xff2288, 1.0),    // hot magenta — postsynaptic receptors
+  receptorOpen: glowMat(0xff77cc, 1.5),// light pink — receptor after binding
+  enzyme: glowMat(0xffdd00, 1.2),      // bright yellow — AChE enzyme
+  mito: mat(0xff5500, 0xff3300, 0.95, false, 0.3), // bright orange — mitochondria
+  membrane: mat(0x2255cc, 0x3366ff, 0.6, true, 0.6),
+  cleft: mat(0x050810, 0x000000, 0.4, true),
 };
 
 // ── GEOMETRY HELPERS ─────────────────────────────────────────
@@ -603,12 +604,20 @@ function fireCalcium(){
 }
 
 function fuseVesicles(){
-  const topVesicles = vesicles.filter(v=>!v.fused).slice(0,10);
+  // Vesicles move to membrane, fuse (shrink), and release ACh — vesicles don't cross into cleft
+  const topVesicles = vesicles.filter(v=>!v.fused).slice(0,12);
   topVesicles.forEach((v,i)=>{
     setTimeout(()=>{
       v.fused=true;
-      v.targetY=1.0;
-    }, i*200);
+      v.targetY=1.0; // move to membrane level
+      // Release ACh molecules from this vesicle's position
+      const vp=v.group.position;
+      achMolecules.slice(i*2, i*2+2).forEach(a=>{
+        a.mesh.visible=true;a.active=true;
+        a.mesh.position.set(vp.x+(Math.random()-.5)*0.5, 1.2, vp.z+(Math.random()-.5)*0.5);
+        a.startY=1.2;
+      });
+    }, i*250);
   });
 }
 
@@ -643,12 +652,25 @@ function activateEnzymes(){
 }
 
 function fullSummary(){
+  // Scene 8: show new action potential firing in postsynaptic neuron
   resetAll();
   setTimeout(()=>fireCalcium(), 200);
   setTimeout(()=>fuseVesicles(), 1500);
   setTimeout(()=>releaseACh(), 2500);
   setTimeout(()=>bindReceptors(), 4000);
   setTimeout(()=>activateEnzymes(), 5500);
+  // New postsynaptic AP pulse — second ring travels downward through post neuron
+  setTimeout(()=>{
+    const ap2=apGroup.clone();
+    ap2.children[0].material=glowMat(0x00ff88,2.5);
+    ap2.position.set(0,-3,0);ap2.scale.set(0,0,0);ap2.visible=true;
+    scene.add(ap2);
+    const expand=setInterval(()=>{
+      ap2.scale.x+=0.08;ap2.scale.y+=0.08;ap2.scale.z+=0.08;
+      ap2.position.y-=0.12;
+      if(ap2.scale.x>3){clearInterval(expand);scene.remove(ap2);}
+    },30);
+  },7000);
 }
 
 function goToScene(n){
