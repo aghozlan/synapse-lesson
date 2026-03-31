@@ -9,40 +9,72 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{width:100%;height:100%;overflow:hidden;background:#02030a;font-family:'Outfit',sans-serif;color:#dde8ff;}
 #c{position:fixed;inset:0;z-index:1;}
-.ov{position:fixed;inset:0;z-index:10;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:16px 20px;}
-.top{display:flex;align-items:flex-start;justify-content:space-between;pointer-events:all;}
-.tag{font-family:'DM Mono',monospace;font-size:.55rem;color:#00cfff;text-transform:uppercase;letter-spacing:3px;border:1px solid rgba(0,207,255,.2);padding:3px 10px;border-radius:2px;display:inline-block;margin-bottom:5px;}
-.nm{font-size:1rem;font-weight:800;color:#fff;}
+.ov{position:fixed;inset:0;z-index:10;pointer-events:none;
+  display:flex;flex-direction:column;justify-content:space-between;padding:12px 14px;}
+.top{display:flex;align-items:center;justify-content:space-between;pointer-events:all;}
+.tag{font-family:'DM Mono',monospace;font-size:.5rem;color:#00cfff;text-transform:uppercase;
+  letter-spacing:2px;border:1px solid rgba(0,207,255,.2);padding:2px 8px;border-radius:2px;
+  display:inline-block;margin-bottom:3px;}
+.nm{font-size:.88rem;font-weight:800;color:#fff;}
 .nm span{color:#cc44ff;}
-.tbtn{padding:6px 14px;border-radius:5px;border:1px solid rgba(80,160,255,.25);background:rgba(8,12,26,.85);color:#dde8ff;font-family:'Outfit',sans-serif;font-weight:600;font-size:.73rem;cursor:pointer;transition:all .2s;backdrop-filter:blur(8px);}
+.tbtn{padding:5px 11px;border-radius:5px;border:1px solid rgba(80,160,255,.25);
+  background:rgba(8,12,26,.85);color:#dde8ff;font-family:'Outfit',sans-serif;
+  font-weight:600;font-size:.68rem;cursor:pointer;transition:all .2s;backdrop-filter:blur(8px);}
 .tbtn:hover{border-color:#00cfff;color:#00cfff;}
 .tbtn.on{background:#00cfff;color:#000;border-color:#00cfff;}
 .ctr{text-align:center;pointer-events:none;}
-.sn{font-family:'DM Mono',monospace;font-size:.55rem;color:#00cfff;text-transform:uppercase;letter-spacing:3px;margin-bottom:5px;opacity:0;transition:opacity .4s;}
-.st{font-size:clamp(.95rem,2.2vw,1.35rem);font-weight:800;color:#fff;text-shadow:0 2px 24px #000;opacity:0;transition:opacity .4s;max-width:580px;margin:0 auto;line-height:1.35;}
-.ss{font-size:.76rem;color:#7a90c8;margin-top:5px;opacity:0;transition:opacity .4s;font-style:italic;}
-.bot{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;}
-.inf{background:rgba(6,9,22,.92);border:1px solid rgba(80,160,255,.22);border-radius:10px;padding:12px 15px;backdrop-filter:blur(12px);flex:1;min-width:180px;max-width:360px;}
-.ilbl{font-family:'DM Mono',monospace;font-size:.55rem;color:#cc44ff;text-transform:uppercase;letter-spacing:2px;margin-bottom:5px;}
-.itl{font-weight:700;font-size:.85rem;color:#fff;margin-bottom:4px;}
-.itx{font-size:.72rem;color:#7a90c8;line-height:1.65;}
-.itx strong{color:#fff;}
-.leg{background:rgba(6,9,22,.92);border:1px solid rgba(80,160,255,.18);border-radius:10px;padding:10px 13px;backdrop-filter:blur(12px);flex-shrink:0;}
-.ltl{font-family:'DM Mono',monospace;font-size:.5rem;color:#7a90c8;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;}
-.li{display:flex;align-items:center;gap:6px;margin-bottom:5px;font-size:.7rem;color:#7a90c8;}
-.ld{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
-.li strong{color:#dde8ff;}
-.stps{display:flex;align-items:center;gap:10px;width:100%;}
+.sn{font-family:'DM Mono',monospace;font-size:.5rem;color:#00cfff;text-transform:uppercase;
+  letter-spacing:2px;margin-bottom:3px;opacity:0;transition:opacity .4s;}
+.st{font-size:clamp(.88rem,2vw,1.2rem);font-weight:800;color:#fff;
+  text-shadow:0 2px 20px #000;opacity:0;transition:opacity .4s;
+  max-width:500px;margin:0 auto;line-height:1.3;}
+.ss{font-size:.7rem;color:#5a9a9e;margin-top:3px;opacity:0;transition:opacity .4s;font-style:italic;}
+.bot{display:flex;align-items:center;gap:8px;pointer-events:all;}
 .dots{display:flex;gap:5px;flex-wrap:wrap;}
-.dot{width:7px;height:7px;border-radius:50%;background:#3a4870;transition:all .3s;cursor:pointer;}
+.dot{width:8px;height:8px;border-radius:50%;background:#1a3a40;transition:all .3s;cursor:pointer;}
 .dot.cur{background:#00cfff;transform:scale(1.4);}
-.dot.done{background:#cc44ff;}
-@media(max-width:600px){
-  .ov{padding:10px 12px;}
-  .bot{flex-direction:column;gap:8px;}
-  .inf,.leg{width:100%;max-width:100%;}
-  .leg{display:flex;flex-direction:column;}
-}
+.dot.done{background:#0088aa;}
+/* FLOATING LEGEND PILL */
+.leg-toggle{position:fixed;top:54px;right:14px;z-index:20;
+  background:rgba(8,12,26,.92);border:1px solid rgba(80,160,255,.3);
+  border-radius:20px;padding:5px 13px;font-size:.62rem;
+  font-family:'DM Mono',monospace;color:#00cfff;cursor:pointer;
+  backdrop-filter:blur(10px);pointer-events:all;white-space:nowrap;
+  transition:all .2s;}
+.leg-toggle:hover{border-color:#00cfff;}
+/* FLOATING LEGEND PANEL */
+.leg{position:fixed;top:84px;right:14px;z-index:20;
+  background:rgba(6,9,22,.96);border:1px solid rgba(80,160,255,.22);
+  border-radius:10px;padding:10px 13px;backdrop-filter:blur(14px);
+  pointer-events:all;min-width:155px;
+  transition:opacity .3s,transform .3s;}
+.leg.hidden{opacity:0;pointer-events:none;transform:translateX(110%);}
+.ltl{font-family:'DM Mono',monospace;font-size:.48rem;color:#7a90c8;
+  text-transform:uppercase;letter-spacing:2px;margin-bottom:7px;}
+.li{display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:.67rem;color:#7a90c8;}
+.ld{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.li strong{color:#dde8ff;}
+/* INFO DRAWER — slides up from bottom */
+.info-bar{position:fixed;bottom:0;left:0;right:0;z-index:20;
+  background:rgba(6,9,22,.97);border-top:1px solid rgba(80,160,255,.22);
+  backdrop-filter:blur(14px);pointer-events:all;
+  transition:transform .35s cubic-bezier(.4,0,.2,1);}
+.info-bar.collapsed{transform:translateY(calc(100% - 44px));}
+.info-handle{display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;height:44px;cursor:pointer;user-select:none;}
+.info-handle-left{display:flex;align-items:center;gap:10px;overflow:hidden;}
+.info-step-pill{font-family:'DM Mono',monospace;font-size:.55rem;color:#000;
+  background:#cc44ff;padding:2px 9px;border-radius:10px;font-weight:700;flex-shrink:0;}
+.info-step-title{font-weight:700;font-size:.82rem;color:#fff;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.info-chevron{font-size:.68rem;color:#5a9a9e;transition:transform .3s;flex-shrink:0;}
+.info-bar:not(.collapsed) .info-chevron{transform:rotate(180deg);}
+.info-body{padding:12px 16px 18px;}
+.ilbl{font-family:'DM Mono',monospace;font-size:.52rem;color:#cc44ff;
+  text-transform:uppercase;letter-spacing:2px;margin-bottom:4px;}
+.itl{font-weight:700;font-size:.84rem;color:#fff;margin-bottom:5px;}
+.itx{font-size:.74rem;color:#5a9a9e;line-height:1.65;}
+.itx strong{color:#c8eef0;}
 #ld{position:fixed;inset:0;z-index:100;background:#02030a;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s;}
 #ld.h{opacity:0;pointer-events:none;}
 #ld .lt{font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:6px;}
@@ -59,12 +91,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:#02030a;font-family:
   <div class="lb"><div class="lf" id="lf"></div></div>
 </div>
 <canvas id="c"></canvas>
+<!-- MAIN OVERLAY (top + centre title only) -->
 <div class="ov">
   <div class="top">
-    <div><div class="tag">Biology · Neural Communication</div><div class="nm">Synapse<span>Lab</span> 3D</div></div>
-    <div style="display:flex;gap:7px;">
-      <button class="tbtn on" id="aBtn" onclick="toggleAuto()">▶ Auto</button>
-      <button class="tbtn on" id="oBtn" onclick="toggleOrb()">🔄 Orbit</button>
+    <div><div class="tag">Biology · Neural</div><div class="nm">Synapse<span>Lab</span> 3D</div></div>
+    <div style="display:flex;gap:6px;">
+      <button class="tbtn on" id="aBtn" onclick="toggleAuto()">▶</button>
+      <button class="tbtn on" id="oBtn" onclick="toggleOrb()">🔄</button>
       <button class="tbtn" onclick="location.href='synapselab.html'">← Lab</button>
     </div>
   </div>
@@ -73,25 +106,40 @@ html,body{width:100%;height:100%;overflow:hidden;background:#02030a;font-family:
     <div class="st" id="st"></div>
     <div class="ss" id="ss"></div>
   </div>
+  <!-- dots row — minimal bottom strip -->
   <div class="bot">
-    <div class="inf">
-      <div class="ilbl" id="il"></div>
-      <div class="itl" id="it"></div>
-      <div class="itx" id="ix"></div>
+    <div class="dots" id="dots"></div>
+  </div>
+</div>
+
+<!-- FLOATING LEGEND TOGGLE -->
+<div class="leg-toggle" onclick="toggleLegend()" id="legToggle">🔑 Key</div>
+
+<!-- FLOATING LEGEND PANEL -->
+<div class="leg hidden" id="legPanel">
+  <div class="ltl">Molecule Key</div>
+  <div class="li"><div class="ld" style="background:#cc44ff;"></div><strong>Vesicles</strong></div>
+  <div class="li"><div class="ld" style="background:#e8f4ff;box-shadow:0 0 4px #aaddff;"></div><strong>Ca²⁺</strong> — white</div>
+  <div class="li"><div class="ld" style="background:#ff6600;"></div><strong>ACh</strong> — orange</div>
+  <div class="li"><div class="ld" style="background:#ff1177;"></div><strong>Receptors</strong></div>
+  <div class="li"><div class="ld" style="background:#ffee00;"></div><strong>AChE</strong> — yellow</div>
+  <div class="li"><div class="ld" style="background:#ff4400;"></div><strong>Mitochondria</strong></div>
+  <div class="li"><div class="ld" style="background:#00ff44;box-shadow:0 0 4px #00ff44;"></div><strong>New AP</strong></div>
+</div>
+
+<!-- INFO DRAWER — slides up from bottom -->
+<div class="info-bar collapsed" id="infoBar">
+  <div class="info-handle" onclick="toggleDrawer()">
+    <div class="info-handle-left">
+      <span class="info-step-pill" id="drawerPill">1</span>
+      <span class="info-step-title" id="drawerTitle">The Synaptic Knob</span>
     </div>
-    <div class="leg">
-      <div class="ltl">Molecule Key</div>
-      <div class="li"><div class="ld" style="background:#cc44ff;"></div><strong>Vesicles</strong> — violet</div>
-      <div class="li"><div class="ld" style="background:#e8f4ff;box-shadow:0 0 5px #aaddff;"></div><strong>Ca²⁺</strong> — bright white</div>
-      <div class="li"><div class="ld" style="background:#ff6600;"></div><strong>ACh</strong> — orange</div>
-      <div class="li"><div class="ld" style="background:#ff1177;"></div><strong>Receptors</strong> — magenta</div>
-      <div class="li"><div class="ld" style="background:#ffee00;"></div><strong>AChE enzyme</strong> — yellow</div>
-      <div class="li"><div class="ld" style="background:#ff4400;"></div><strong>Mitochondria</strong> — red-orange</div>
-      <div class="li"><div class="ld" style="background:#00ff44;box-shadow:0 0 5px #00ff44;"></div><strong>New AP</strong> — bright green</div>
-    </div>
-    <div class="stps">
-      <div class="dots" id="dots"></div>
-    </div>
+    <span class="info-chevron">▲</span>
+  </div>
+  <div class="info-body">
+    <div class="ilbl" id="il"></div>
+    <div class="itl" id="it"></div>
+    <div class="itx" id="ix"></div>
   </div>
 </div>
 
@@ -348,6 +396,17 @@ document.addEventListener('touchmove',e=>{if(!drag)return;theta-=(e.touches[0].c
 document.addEventListener('touchend',()=>drag=false);
 function toggleOrb(){orbOn=!orbOn;document.getElementById('oBtn').classList.toggle('on',orbOn);}
 
+function toggleLegend(){
+  const p=document.getElementById('legPanel');
+  const t=document.getElementById('legToggle');
+  p.classList.toggle('hidden');
+  t.textContent=p.classList.contains('hidden')?'🔑 Key':'✕ Key';
+}
+
+function toggleDrawer(){
+  document.getElementById('infoBar').classList.toggle('collapsed');
+}
+
 let cur=0,scT=0;
 let autoOn=true,autoTmr=null;
 
@@ -370,6 +429,11 @@ function showUI(){
     document.getElementById('il').textContent=s.l;
     document.getElementById('it').textContent=s.ti;
     document.getElementById('ix').innerHTML=s.tx;
+    // Update drawer handle
+    document.getElementById('drawerPill').textContent=cur+1;
+    document.getElementById('drawerTitle').textContent=s.ti;
+    // Auto-collapse drawer when scene changes so animation is visible
+    document.getElementById('infoBar').classList.add('collapsed');
     ['sn','st','ss'].forEach(id=>document.getElementById(id).style.opacity=1);
   },280);
   document.querySelectorAll('.dot').forEach((d,i)=>{d.classList.toggle('cur',i===cur);d.classList.toggle('done',i<cur);});
