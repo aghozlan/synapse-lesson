@@ -82,6 +82,22 @@ html,body{width:100%;height:100%;overflow:hidden;background:#02030a;font-family:
 #ld .ls{font-size:.76rem;color:#7a90c8;margin-bottom:22px;}
 #ld .lb{width:180px;height:3px;background:#0d1228;border-radius:2px;overflow:hidden;}
 #ld .lf{height:100%;background:linear-gradient(90deg,#cc44ff,#00cfff);width:0%;transition:width .3s;border-radius:2px;}
+
+/* MOBILE OPTIMIZATIONS */
+@media (max-width: 600px) {
+  .leg-toggle { top: 50px; right: 10px; padding: 4px 10px; font-size: 0.55rem; }
+  .leg { top: 75px; right: 10px; min-width: 130px; padding: 8px; }
+  .li { font-size: 0.6rem; }
+  .ld { width: 8px; height: 8px; }
+  .info-handle { height: 38px; padding: 0 12px; }
+  .info-bar.collapsed { transform: translateY(calc(100% - 38px)); }
+  .info-body { padding: 8px 12px 12px; }
+  .itl { font-size: 0.75rem; margin-bottom: 3px; }
+  .itx { font-size: 0.65rem; line-height: 1.4; }
+  .st { font-size: 0.95rem; padding: 0 10px; }
+  .ss { font-size: 0.65rem; }
+  .tbtn { padding: 4px 8px; font-size: 0.6rem; }
+}
 </style>
 </head>
 <body>
@@ -91,7 +107,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#02030a;font-family:
   <div class="lb"><div class="lf" id="lf"></div></div>
 </div>
 <canvas id="c"></canvas>
-<!-- MAIN OVERLAY (top + centre title only) -->
 <div class="ov">
   <div class="top">
     <div><div class="tag">Biology · Neural</div><div class="nm">Synapse<span>Lab</span> 3D</div></div>
@@ -106,16 +121,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:#02030a;font-family:
     <div class="st" id="st"></div>
     <div class="ss" id="ss"></div>
   </div>
-  <!-- dots row — minimal bottom strip -->
   <div class="bot">
     <div class="dots" id="dots"></div>
   </div>
 </div>
 
-<!-- FLOATING LEGEND TOGGLE -->
 <div class="leg-toggle" onclick="toggleLegend()" id="legToggle">🔑 Key</div>
 
-<!-- FLOATING LEGEND PANEL -->
 <div class="leg hidden" id="legPanel">
   <div class="ltl">Molecule Key</div>
   <div class="li"><div class="ld" style="background:#cc44ff;"></div><strong>Vesicles</strong></div>
@@ -127,7 +139,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#02030a;font-family:
   <div class="li"><div class="ld" style="background:#00ff44;box-shadow:0 0 4px #00ff44;"></div><strong>New AP</strong></div>
 </div>
 
-<!-- INFO DRAWER — slides up from bottom -->
 <div class="info-bar collapsed" id="infoBar">
   <div class="info-handle" onclick="toggleDrawer()">
     <div class="info-handle-left">
@@ -245,10 +256,7 @@ const azM=ms(P.PRE,0x3366ff,0.95,false,0.2);
 const az=new THREE.Mesh(new THREE.CircleGeometry(3.0,32),azM);
 az.rotation.x=-Math.PI/2;az.position.y=0.15;G.add(az);
 
-// cleft indicator ring
-const crM=mg(0x334488,0.55);
-const cr=new THREE.Mesh(new THREE.TorusGeometry(3.2,0.07,8,48),crM);
-cr.rotation.x=Math.PI/2;cr.position.y=-0.5;G.add(cr);
+// NOTE: The cleft indicator ring (TorusGeometry) was removed here to eliminate the circular shape between the neurons.
 
 // postsynaptic neuron — dendritic spine
 const postM=ms(P.POST,P.POST,0.74,true,0.5);
@@ -437,7 +445,13 @@ function showUI(){
     ['sn','st','ss'].forEach(id=>document.getElementById(id).style.opacity=1);
   },280);
   document.querySelectorAll('.dot').forEach((d,i)=>{d.classList.toggle('cur',i===cur);d.classList.toggle('done',i<cur);});
-  const c=SC[cur].cam;theta=c.th;phi=c.phi;radius=c.r;
+  
+  const c=SC[cur].cam;
+  theta=c.th;
+  phi=c.phi;
+  // Increase camera distance slightly on narrow screens (Mobile) to prevent the UI from covering the model
+  radius = window.innerWidth < 600 ? c.r * 1.4 : c.r;
+  
   scT=0;runScene();
 }
 
@@ -700,7 +714,14 @@ function animate(){
   R.render(scene,cam);
 }
 
-window.addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();R.setSize(innerWidth,innerHeight);});
+window.addEventListener('resize',()=>{
+  cam.aspect=innerWidth/innerHeight;
+  cam.updateProjectionMatrix();
+  R.setSize(innerWidth,innerHeight);
+  // Re-adjust camera radius on resize if needed
+  const c=SC[cur].cam;
+  radius = window.innerWidth < 600 ? c.r * 1.4 : c.r;
+});
 
 // loading
 let lp=0;
