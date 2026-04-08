@@ -28,7 +28,7 @@ In response to the educational challenges in Lebanon (March 2026), this applicat
 If you are a fellow educator, you can share this link with your students as a pre-session activity. 
 
 ### How to use:
-1. Send the [Live Demo Link](aghozlan.github.io/synapse-lesson) to your students.
+1. Send the [Live Demo Link](https://aghozlan.github.io/synapse-lesson) to your students.
 2. Ask them to complete the "Calcium Gate" challenge.
 3. Use the visual of the green-binding neurotransmitters as a starting point for your next live online session.
 
