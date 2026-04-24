@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology Official Exam Practice</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.6;
+            color: #000;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #fff;
+        }
+        h2 {
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: underline;
+            margin-top: 40px;
+            margin-bottom: 10px;
+        }
+        p {
+            margin-bottom: 10px;
+            text-align: justify;
+        }
+        .document-title {
+            text-align: center;
+            font-weight: bold;
+            font-style: italic;
+            margin: 15px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 15px;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 8px 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .graph-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .question-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .question-list li {
+            margin-bottom: 15px;
+            display: flex;
+        }
+        .q-number {
+            font-weight: bold;
+            margin-right: 10px;
+            white-space: nowrap;
+        }
+        svg {
+            max-width: 100%;
+            height: auto;
+            background-color: #fff;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <div style="text-align: center; font-weight: bold; font-size: 20px; margin-bottom: 30px;">
+        Lebanese Curriculum Practice Exams - Life Sciences (Immunology)
+    </div>
+
+    <!-- EXERCISE 1 -->
+    <h2>Exercise 1 (6 pts)</h2>
+    <p>In the framework of studying the transmission of immunity against Tetanus, a fatal disease caused by a toxin secreted by tetanus bacilli, the following experiments are conducted on lots of mice of the same strain. Document 1 shows the experimental procedure used and the results obtained.</p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Experiment</th>
+                <th>Experimental Procedure</th>
+                <th>Results after 5 days</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>1</strong></td>
+                <td>Lot A is injected with a lethal dose of Tetanus toxin.</td>
+                <td>Death of mice in Lot A</td>
+            </tr>
+            <tr>
+                <td><strong>2</strong></td>
+                <td>Lot B is injected with an attenuated Tetanus toxoid (anatoxin). 15 days later, they are injected with the lethal Tetanus toxin.</td>
+                <td>Survival of mice in Lot B</td>
+            </tr>
+            <tr>
+                <td><strong>3</strong></td>
+                <td>Serum is extracted from Lot B (15 days after toxoid injection) and injected into Lot C. Immediately after, Lot C is injected with the lethal Tetanus toxin.</td>
+                <td>Survival of mice in Lot C</td>
+            </tr>
+            <tr>
+                <td><strong>4</strong></td>
+                <td>Serum extracted from Lot B is injected into Lot D. Immediately after, Lot D is injected with a lethal Diphtheria toxin.</td>
+                <td>Death of mice in Lot D</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="document-title">Document 1. Experimental procedure and results</div>
+
+    <ul class="question-list">
+        <li><span class="q-number">1-</span> <div>Write a short text describing the experiments 2 and 3 and their obtained results.</div></li>
+        <li><span class="q-number">2-</span> <div>Interpret the results of the 4 experiments. What can you deduce regarding the characteristics of the studied immune response?</div></li>
+    </ul>
+
+    <p>To understand the variations in the immune effectors during multiple contacts with the same antigen, we measure the amount of specific antibodies in the blood of a mouse after two successive injections of the Tetanus toxoid. The results are shown in Document 2.</p>
+
+    <div class="graph-container">
+        <!-- SVG Graph for Primary vs Secondary Humoral Response -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="500" height="300" viewBox="0 0 500 300">
+            <!-- Axes -->
+            <line x1="50" y1="250" x2="480" y2="250" stroke="black" stroke-width="2"/>
+            <line x1="50" y1="250" x2="50" y2="20" stroke="black" stroke-width="2"/>
+            <!-- Arrowheads -->
+            <polygon points="480,245 490,250 480,255" fill="black" />
+            <polygon points="45,20 50,10 55,20" fill="black" />
+            
+            <!-- Labels -->
+            <text x="220" y="290" font-family="'Times New Roman', Times, serif" font-size="14">Time (weeks)</text>
+            <text x="15" y="150" font-family="'Times New Roman', Times, serif" font-size="14" transform="rotate(-90 15,150)">Amount of Antibodies (a.u)</text>
+            
+            <!-- X-axis ticks -->
+            <text x="50" y="270" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="middle">0</text>
+            <text x="120" y="270" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="middle">1</text>
+            <text x="190" y="270" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="middle">2</text>
+            <text x="260" y="270" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="middle">3</text>
+            <text x="330" y="270" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="middle">4</text>
+            <text x="400" y="270" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="middle">5</text>
+            
+            <!-- Injections markers -->
+            <line x1="50" y1="250" x2="50" y2="255" stroke="black" stroke-width="2"/>
+            <text x="50" y="290" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="middle" font-weight="bold">↑ 1st Inj.</text>
+            
+            <line x1="260" y1="250" x2="260" y2="255" stroke="black" stroke-width="2"/>
+            <text x="260" y="290" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="middle" font-weight="bold">↑ 2nd Inj.</text>
+
+            <!-- Curves -->
+            <!-- Primary response -->
+            <path d="M 50 250 L 90 250 Q 120 180 150 160 Q 180 180 260 230" fill="none" stroke="blue" stroke-width="2"/>
+            <!-- Secondary response -->
+            <path d="M 260 230 Q 280 80 320 50 Q 360 80 450 180" fill="none" stroke="red" stroke-width="2"/>
+            
+            <!-- Legend -->
+            <text x="350" y="50" font-family="'Times New Roman', Times, serif" font-size="12" fill="black">Primary Response</text>
+            <line x1="330" y1="46" x2="345" y2="46" stroke="blue" stroke-width="2"/>
+            <text x="350" y="70" font-family="'Times New Roman', Times, serif" font-size="12" fill="black">Secondary Response</text>
+            <line x1="330" y1="66" x2="345" y2="66" stroke="red" stroke-width="2"/>
+        </svg>
+    </div>
+    <div class="document-title">Document 2. Variation of plasma antibodies over time</div>
+
+    <ul class="question-list">
+        <li><span class="q-number">3-</span> <div>Analyze the curve in Document 2. Draw out the characteristics of the secondary immune response compared to the primary one.</div></li>
+        <li><span class="q-number">4-</span> <div>By referring to acquired knowledge, explain the cellular mechanism responsible for the rapid and amplified production of antibodies following the second injection.</div></li>
+    </ul>
+
+    <hr style="margin: 40px 0; border: 0; border-top: 1px dashed #ccc;">
+
+
+    <!-- EXERCISE 2 -->
+    <h2>Exercise 2 (7 pts)</h2>
+    <p>In order to determine the specific cells responsible for the rejection of tissue grafts (cell-mediated immunity), a series of experiments are performed using different lines of mice (Strain A and Strain B). We utilize "Nude" mice, which have a genetic mutation resulting in the congenital absence of the thymus. Document 1 summarizes the experimental conditions and results.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Experiment</th>
+                <th>Experimental Subject</th>
+                <th>Treatment</th>
+                <th>Results (Graft Status)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>1</strong></td>
+                <td>Normal Mouse (Strain A)</td>
+                <td>Skin graft from Strain B</td>
+                <td>Graft rejected after 12 days</td>
+            </tr>
+            <tr>
+                <td><strong>2</strong></td>
+                <td>Nude Mouse (Strain A)</td>
+                <td>Skin graft from Strain B</td>
+                <td>Graft is permanently accepted</td>
+            </tr>
+            <tr>
+                <td><strong>3</strong></td>
+                <td>Nude Mouse (Strain A)</td>
+                <td>Injection of T-lymphocytes extracted from a normal Strain A mouse that previously rejected a Strain B graft. Then, skin graft from Strain B.</td>
+                <td>Graft rejected rapidly (in 3 days)</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="document-title">Document 1. Graft experiments on normal and nude mice</div>
+
+    <ul class="question-list">
+        <li><span class="q-number">1-</span> <div>Based on the results of experiments 1 and 2, deduce the role of the thymus in the graft rejection process.</div></li>
+        <li><span class="q-number">2-</span> <div>Interpret the results of experiment 3. What property of the immune system is highlighted by the speed of rejection in this experiment?</div></li>
+    </ul>
+
+    <p>To understand how the effector cells of cell-mediated immunity destroy the grafted cells, we culture specific immune cells (T<sub>C</sub> lymphocytes) extracted from a normal Strain A mouse that rejected a Strain B graft. These T<sub>C</sub> cells are placed in vitro with different target cells in the presence of radioactive Chromium (<sup>51</sup>Cr). When target cells are destroyed (lysed), they release <sup>51</sup>Cr into the surrounding medium. Document 2 shows the percentage of specific lysis.</p>
+
+    <div class="graph-container">
+        <!-- SVG Bar Chart for Cell Lysis (Corrected for Safari) -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="450" height="250" viewBox="0 0 450 250">
+            <!-- Axes -->
+            <line x1="50" y1="200" x2="400" y2="200" stroke="black" stroke-width="2"/>
+            <line x1="50" y1="200" x2="50" y2="20" stroke="black" stroke-width="2"/>
+            
+            <!-- Y-axis ticks -->
+            <text x="40" y="205" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="end">0</text>
+            <text x="40" y="150" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="end">30</text>
+            <text x="40" y="95" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="end">60</text>
+            <text x="40" y="40" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="end">90</text>
+            
+            <!-- Axis Labels -->
+            <text x="15" y="130" font-family="'Times New Roman', Times, serif" font-size="14" transform="rotate(-90 15,130)">% of specific lysis</text>
+            
+            <!-- Bars -->
+            <!-- Bar 1 -->
+            <rect x="80" y="195" width="50" height="5" fill="#888888" />
+            <text x="105" y="220" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="middle">Medium +</text>
+            <text x="105" y="235" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="middle">Strain B Cells</text>
+            
+            <!-- Bar 2 -->
+            <rect x="180" y="195" width="50" height="5" fill="#888888" />
+            <text x="205" y="220" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="middle">TC cells +</text>
+            <text x="205" y="235" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="middle">Strain A Cells</text>
+
+            <!-- Bar 3 -->
+            <rect x="280" y="50" width="50" height="150" fill="#444444" />
+            <text x="305" y="220" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="middle">TC cells +</text>
+            <text x="305" y="235" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="middle">Strain B Cells</text>
+        </svg>
+    </div>
+    <div class="document-title">Document 2. Specific lysis of target cells measured by <sup>51</sup>Cr release</div>
+
+    <ul class="question-list">
+        <li><span class="q-number">3-</span> <div>Analyze the results obtained in Document 2. What can be deduced concerning the specificity of T<sub>C</sub> cells?</div></li>
+        <li><span class="q-number">4-</span> <div>By referring to your acquired knowledge, explain the molecular mechanism by which T<sub>C</sub> lymphocytes provoke the lysis of the target cells.</div></li>
+    </ul>
+
+    <hr style="margin: 40px 0; border: 0; border-top: 1px dashed #ccc;">
+
+
+    <!-- EXERCISE 3 -->
+    <h2>Exercise 3 (7 pts)</h2>
+    <p>AIDS (Acquired Immunodeficiency Syndrome) is a disease characterized by a severe depression of the immune system, caused by HIV. To study the evolution of this viral infection and its consequences on the immune cells, we monitor the amount of T4 lymphocytes, the viral load (number of viral RNA copies/mL of blood), and the concentration of anti-HIV antibodies in an untreated patient over several years. The results are translated into the graph shown in Document 1.</p>
+
+    <div class="graph-container">
+        <!-- SVG Graph for HIV progression -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="600" height="350" viewBox="0 0 600 350">
+            <!-- Axes -->
+            <line x1="50" y1="280" x2="550" y2="280" stroke="black" stroke-width="2"/> <!-- X axis -->
+            <line x1="50" y1="280" x2="50" y2="30" stroke="black" stroke-width="2"/>  <!-- Y1 axis -->
+            <line x1="550" y1="280" x2="550" y2="30" stroke="black" stroke-width="2"/> <!-- Y2 axis -->
+            
+            <!-- X-axis Labels (Time) -->
+            <text x="300" y="320" font-family="'Times New Roman', Times, serif" font-size="14">Time (Years)</text>
+            <text x="50" y="300" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="middle">0</text>
+            <text x="150" y="300" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="middle">3</text>
+            <text x="250" y="300" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="middle">6</text>
+            <text x="350" y="300" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="middle">9</text>
+            <text x="450" y="300" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="middle">12</text>
+            
+            <!-- Y1-axis (T4 cells & Antibodies) -->
+            <text x="15" y="160" font-family="'Times New Roman', Times, serif" font-size="14" transform="rotate(-90 15,160)">T4 count (cells/mm³) / Antibodies (a.u)</text>
+            <text x="40" y="280" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="end">0</text>
+            <text x="40" y="150" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="end">500</text>
+            <text x="40" y="50" font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="end">1000</text>
+
+            <!-- Y2-axis (Viral load) -->
+            <text x="585" y="160" font-family="'Times New Roman', Times, serif" font-size="14" transform="rotate(90 585,160)">Viral Load (RNA copies/mL)</text>
+            
+            <!-- Phases divisions -->
+            <line x1="100" y1="280" x2="100" y2="30" stroke="#aaa" stroke-dasharray="5,5"/>
+            <line x1="400" y1="280" x2="400" y2="30" stroke="#aaa" stroke-dasharray="5,5"/>
+            <text x="75" y="20" font-family="'Times New Roman', Times, serif" font-size="11" text-anchor="middle">Primary</text>
+            <text x="250" y="20" font-family="'Times New Roman', Times, serif" font-size="11" text-anchor="middle">Asymptomatic Phase</text>
+            <text x="475" y="20" font-family="'Times New Roman', Times, serif" font-size="11" text-anchor="middle">Symptomatic (AIDS)</text>
+
+            <!-- Curves -->
+            <!-- T4 Cells (Blue) -->
+            <path d="M 50 50 L 75 180 L 100 120 Q 250 180 400 250 Q 450 270 500 275" fill="none" stroke="blue" stroke-width="2"/>
+            
+            <!-- Viral Load (Red) -->
+            <path d="M 50 280 L 75 80 L 100 240 Q 250 230 400 150 Q 450 80 500 40" fill="none" stroke="red" stroke-width="2"/>
+            
+            <!-- Antibodies (Green) -->
+            <path d="M 50 280 L 70 280 L 100 100 Q 250 80 400 120 Q 450 220 500 280" fill="none" stroke="green" stroke-width="2" stroke-dasharray="4,4"/>
+
+            <!-- Legend -->
+            <rect x="350" y="30" width="180" height="60" fill="white" stroke="black"/>
+            <line x1="360" y1="45" x2="380" y2="45" stroke="blue" stroke-width="2"/>
+            <text x="390" y="49" font-family="'Times New Roman', Times, serif" font-size="12">T4 Lymphocytes</text>
+            <line x1="360" y1="60" x2="380" y2="60" stroke="red" stroke-width="2"/>
+            <text x="390" y="64" font-family="'Times New Roman', Times, serif" font-size="12">Viral Load</text>
+            <line x1="360" y1="75" x2="380" y2="75" stroke="green" stroke-width="2" stroke-dasharray="4,4"/>
+            <text x="390" y="79" font-family="'Times New Roman', Times, serif" font-size="12">Anti-HIV Antibodies</text>
+        </svg>
+    </div>
+    <div class="document-title">Document 1. Evolution of immune parameters and viral load in an HIV-infected patient</div>
+
+    <ul class="question-list">
+        <li><span class="q-number">1-</span> <div>Analyze the variation of the amount of T4 lymphocytes and the viral load during the primary infection phase (first weeks) and the asymptomatic phase.</div></li>
+        <li><span class="q-number">2-</span> <div>Find out the cause of the sharp increase in the viral load during the symptomatic phase (AIDS stage).</div></li>
+    </ul>
+
+    <p>To investigate the specific targeting of HIV, researchers prepare two distinct cell cultures. Lot 1 contains human cells that naturally possess the membrane receptor CD4. Lot 2 contains human cells genetically modified so they do NOT express the CD4 receptor. Both lots are placed in a medium containing HIV for a given duration. Then, the cells are washed and we observe whether the virus was able to penetrate and infect them. Document 2 shows the results.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Experimental Culture</th>
+                <th>Conditions</th>
+                <th>Results</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Lot 1</strong></td>
+                <td>Cells possessing CD4 receptors + HIV</td>
+                <td>Infection of the cells (Viral RNA found inside)</td>
+            </tr>
+            <tr>
+                <td><strong>Lot 2</strong></td>
+                <td>Cells lacking CD4 receptors + HIV</td>
+                <td>No infection (No Viral RNA found inside)</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="document-title">Document 2. Role of CD4 in HIV infection</div>
+
+    <ul class="question-list">
+        <li><span class="q-number">3-</span> <div>Interpret the results of Document 2. What can you deduce regarding the entry mechanism of HIV?</div></li>
+        <li><span class="q-number">4-</span> <div>Knowing that T4 lymphocytes orchestrate the entire specific immune response (by secreting Interleukins), explain why the infection by HIV eventually leads to "Acquired Immunodeficiency" (opportunistic diseases).</div></li>
+    </ul>
+
+</body>
+</html>
